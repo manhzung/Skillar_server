@@ -40,9 +40,24 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    birthday: {
+      type: Date,
+    },
+    moreInfo: {
+      type: String,
+      trim: true,
+    },
     isEmailVerified: {
       type: Boolean,
-      default: false,
+      default: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {

@@ -1,2 +1,7 @@
 module.exports.Token = require('./token.model');
 module.exports.User = require('./user.model');
+module.exports.Assignment = require('./assignment.model');
+module.exports.Homework = require('./homework.model');
+module.exports.Review = require('./review.model');
+module.exports.HomeworkReview = require('./homeworkReview.model');
+module.exports.Schedule = require('./schedule.model');
