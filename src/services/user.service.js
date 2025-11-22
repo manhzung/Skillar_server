@@ -79,6 +79,31 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+/**
+ * Count total users
+ * @returns {Promise<number>}
+ */
+const countUsers = async () => {
+  return User.countDocuments();
+};
+
+/**
+ * Count users by role
+ * @returns {Promise<Object>}
+ */
+const countUsersByRole = async () => {
+  const roles = ['student', 'parent', 'tutor', 'admin'];
+  const counts = {};
+
+  await Promise.all(
+    roles.map(async (role) => {
+      counts[role] = await User.countDocuments({ role });
+    })
+  );
+
+  return counts;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +111,6 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  countUsers,
+  countUsersByRole,
 };

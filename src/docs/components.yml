@@ -12,12 +12,131 @@ components:
           type: string
         role:
           type: string
-          enum: [user, admin]
+          enum: [student, parent, tutor, admin]
+        phone:
+          type: string
+        birthday:
+          type: string
+          format: date
+        moreInfo:
+          type: string
+        isEmailVerified:
+          type: boolean
+        isActive:
+          type: boolean
       example:
         id: 5ebac534954b54139806c112
-        email: fake@example.com
-        name: fake name
-        role: user
+        email: student@example.com
+        name: John Doe
+        role: student
+        phone: '+84123456789'
+        birthday: '2005-01-15'
+        isEmailVerified: true
+        isActive: true
+
+    Schedule:
+      type: object
+      properties:
+        id:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        duration:
+          type: number
+          description: Duration in minutes
+        subjectCode:
+          type: string
+        studentId:
+          type: string
+        tutorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: 5ebac534954b54139806c113
+        startTime: '2024-11-22T14:00:00.000Z'
+        duration: 60
+        subjectCode: 'MATH101'
+        studentId: '5ebac534954b54139806c112'
+        tutorId: '5ebac534954b54139806c114'
+
+    UserStats:
+      type: object
+      properties:
+        total:
+          type: number
+          example: 100
+        students:
+          type: number
+          example: 60
+        parents:
+          type: number
+          example: 20
+        tutors:
+          type: number
+          example: 15
+        admins:
+          type: number
+          example: 5
+
+    TodayScheduleCount:
+      type: object
+      properties:
+        count:
+          type: number
+          example: 15
+
+    DashboardStats:
+      type: object
+      properties:
+        totalSchedules:
+          type: number
+        todaySchedules:
+          type: number
+        totalStudents:
+          type: number
+        totalTutors:
+          type: number
+      example:
+        totalSchedules: 250
+        todaySchedules: 15
+        totalStudents: 60
+        totalTutors: 15
+
+    StudentsPerWeekData:
+      type: array
+      items:
+        type: object
+        properties:
+          week:
+            type: string
+          count:
+            type: number
+      example:
+        - week: '2024-W46'
+          count: 25
+        - week: '2024-W47'
+          count: 30
+
+    SchedulesPerMonthData:
+      type: array
+      items:
+        type: object
+        properties:
+          month:
+            type: string
+          count:
+            type: number
+      example:
+        - month: '2024-06'
+          count: 45
+        - month: '2024-07'
+          count: 52
 
     Token:
       type: object

@@ -1,5 +1,7 @@
 const allRoles = {
   student: [],
+  parent: [],
+  tutor: [],
   admin: ['getUsers', 'manageUsers'],
 };
 

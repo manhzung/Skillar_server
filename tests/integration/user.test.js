@@ -18,7 +18,7 @@ describe('User routes', () => {
         name: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
-        role: 'user',
+        role: 'student',
       };
     });
 
@@ -128,7 +128,7 @@ describe('User routes', () => {
         .expect(httpStatus.BAD_REQUEST);
     });
 
-    test('should return 400 error if role is neither user nor admin', async () => {
+    test('should return 400 error if role is not valid', async () => {
       await insertUsers([admin]);
       newUser.role = 'invalid';
 
@@ -210,7 +210,7 @@ describe('User routes', () => {
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ role: 'user' })
+        .query({ role: 'student' })
         .send()
         .expect(httpStatus.OK);
 
@@ -498,14 +498,14 @@ describe('User routes', () => {
         id: userOne._id.toHexString(),
         name: updateBody.name,
         email: updateBody.email,
-        role: 'user',
+        role: 'student',
         isEmailVerified: false,
       });
 
       const dbUser = await User.findById(userOne._id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(updateBody.password);
-      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email, role: 'user' });
+      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email, role: 'student' });
     });
 
     test('should return 401 error if access token is missing', async () => {

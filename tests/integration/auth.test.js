@@ -37,14 +37,14 @@ describe('Auth routes', () => {
         id: expect.anything(),
         name: newUser.name,
         email: newUser.email,
-        role: 'user',
+        role: 'student',
         isEmailVerified: false,
       });
 
       const dbUser = await User.findById(res.body.user.id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: 'user', isEmailVerified: false });
+      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: 'student', isEmailVerified: false });
 
       expect(res.body.tokens).toEqual({
         access: { token: expect.anything(), expires: expect.anything() },
