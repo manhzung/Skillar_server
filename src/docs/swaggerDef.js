@@ -17,6 +17,10 @@ const swaggerDef = {
       url: `http://localhost:${config.port}/v1`,
       description: 'Development server',
     },
+    {
+      url: 'http://47.128.68.241/v1',
+      description: 'Production server (EC2)',
+    },
   ],
 };
 

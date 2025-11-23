@@ -15,6 +15,14 @@ router.get(
   '/',
   swaggerUi.setup(specs, {
     explorer: true,
+    swaggerOptions: {
+      // Force HTTP protocol - prevent browser auto-upgrade to HTTPS
+      url: specs,
+      validatorUrl: null,
+    },
+    customCss: `
+      .swagger-ui .scheme-container { display: none !important; }
+    `,
   })
 );
 
