@@ -19,7 +19,11 @@ const swaggerDef = {
     },
     {
       url: 'http://47.128.68.241/v1',
-      description: 'Production server (EC2)',
+      description: 'Production server (IP)',
+    },
+    {
+      url: 'http://ec2-47-128-68-241.ap-southeast-1.compute.amazonaws.com/v1',
+      description: 'Production server (AWS DNS)',
     },
   ],
 };
