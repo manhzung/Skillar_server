@@ -14,16 +14,16 @@ const swaggerDef = {
   },
   servers: [
     {
-      url: `http://localhost:${config.port}/v1`,
-      description: 'Development server',
-    },
-    {
       url: 'http://47.128.68.241/v1',
       description: 'Production server (IP)',
     },
     {
       url: 'http://ec2-47-128-68-241.ap-southeast-1.compute.amazonaws.com/v1',
       description: 'Production server (AWS DNS)',
+    },
+    {
+      url: `http://localhost:${config.port}/v1`,
+      description: 'Development server (Local)',
     },
   ],
 };
