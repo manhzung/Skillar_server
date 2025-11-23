@@ -413,3 +413,6 @@ Phát triển bởi Skillar Team
 ---
 
 **Note**: Đây là backend API, cần kết hợp với frontend client để có ứng dụng hoàn chỉnh.
+
+Public IPv4 address: 47.128.68.241
+Public IPv4 DNS: ec2-47-128-68-241.ap-southeast-1.compute.amazonaws.com

@@ -22,7 +22,10 @@ if (config.env !== 'test') {
 }
 
 // set security HTTP headers
-app.use(helmet());
+// Disable CSP to prevent HTTPS upgrade for Swagger docs
+app.use(helmet({
+  contentSecurityPolicy: false,
+}));
 
 // parse json request body
 app.use(express.json());
