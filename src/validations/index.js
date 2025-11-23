@@ -1,2 +1,9 @@
 module.exports.authValidation = require('./auth.validation');
 module.exports.userValidation = require('./user.validation');
+module.exports.scheduleValidation = require('./schedule.validation');
+module.exports.studentInfoValidation = require('./studentInfo.validation');
+module.exports.tutorInfoValidation = require('./tutorInfo.validation');
+module.exports.assignmentValidation = require('./assignment.validation');
+module.exports.homeworkValidation = require('./homework.validation');
+module.exports.reviewValidation = require('./review.validation');
+module.exports.fileValidation = require('./file.validation');

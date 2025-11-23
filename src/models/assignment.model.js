@@ -55,6 +55,15 @@ const assignmentSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    subject: {
+      type: String,
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'in-progress', 'completed'],
+      default: 'pending',
+    },
     tasks: [assignmentDetailSchema],
   },
   {

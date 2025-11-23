@@ -1,440 +1,415 @@
-# RESTful API Node Server Boilerplate
+# Skillar Backend API
 
-[![Build Status](https://travis-ci.org/hagopj13/node-express-boilerplate.svg?branch=master)](https://travis-ci.org/hagopj13/node-express-boilerplate)
-[![Coverage Status](https://coveralls.io/repos/github/hagopj13/node-express-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/hagopj13/node-express-boilerplate?branch=master)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![Node.js](https://img.shields.io/badge/Node.js-v14+-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.x-blue.svg)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.x-green.svg)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A boilerplate/starter project for quickly building RESTful APIs using Node.js, Express, and Mongoose.
+Backend API cho Skillar - Nền tảng quản lý giáo dục kết nối học sinh, phụ huynh và gia sư. Hệ thống cung cấp các API để quản lý người dùng, lịch học, bài tập, homework, đánh giá và nhiều tính năng khác.
 
-By running a single command, you will get a production-ready Node.js app installed and fully configured on your machine. The app comes with many built-in features, such as authentication using JWT, request validation, unit and integration tests, continuous integration, docker support, API documentation, pagination, etc. For more details, check the features list below.
+## 🚀 Tính Năng Chính
 
-## Quick Start
+### 📚 Quản Lý Học Tập
 
-To create a project, simply run:
+- **Schedules (Lịch Học)**: Quản lý lịch học giữa học sinh và gia sư
+  - Tự động tạo Jitsi Meet link cho mỗi buổi học
+  - Thống kê lịch học theo ngày, tuần, tháng
+  - Dashboard analytics cho admin
+- **Assignments (Bài Tập Trên Lớp)**: Checklist theo dõi tiến độ học tập trong buổi học
+  - Quản lý tasks với estimated/actual time
+  - Submit solutions từ học sinh
+  - Grading từ gia sư
+- **Homeworks (Bài Tập Về Nhà)**: Quản lý bài tập về nhà
+  - Deadline tracking
+  - Difficulty levels (easy, medium, hard, advanced)
+  - Submit và grading workflow
+- **Reviews (Đánh Giá)**: Đánh giá hàng ngày từ gia sư
+  - Rating theo nhiều tiêu chí (1-5 stars)
+  - Assignment grading (0-100 points)
+  - Overall feedback
+
+### 👥 Quản Lý Người Dùng
+
+- **Users**: CRUD cho 4 loại người dùng (student, parent, tutor, admin)
+- **StudentInfo**: Thông tin mở rộng của học sinh (trường, lớp, sở thích, điểm mạnh/yếu)
+- **TutorInfo**: Thông tin mở rộng của gia sư (môn dạy, kinh nghiệm, rating)
+- **User Statistics**: Thống kê người dùng theo role
+
+### 📁 Quản Lý File
+
+- Upload file lên Cloudinary (images, PDFs, documents)
+- Upload multiple files (tối đa 10 files)
+- Delete files (admin only)
+
+### 🔐 Authentication & Authorization
+
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Refresh token mechanism
+- Email verification
+- Password reset flow
+
+## 🛠️ Tech Stack
+
+- **Runtime**: Node.js v14+
+- **Framework**: Express.js
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: Passport.js + JWT
+- **Validation**: Joi
+- **File Upload**: Cloudinary
+- **API Documentation**: Swagger/OpenAPI 3.0
+- **Testing**: Jest
+- **Logging**: Winston + Morgan
+- **Security**: Helmet, express-mongo-sanitize, xss-clean
+- **Process Management**: PM2
+
+## 📋 Yêu Cầu Hệ Thống
+
+- Node.js >= 14.x
+- MongoDB >= 4.x
+- npm hoặc yarn
+- Cloudinary account (cho file upload)
+
+## ⚙️ Cài Đặt
+
+### 1. Clone Repository
 
 ```bash
-npx create-nodejs-express-app <project-name>
+git clone <repository-url>
+cd server
 ```
 
-Or
+### 2. Install Dependencies
 
 ```bash
-npm init nodejs-express-app <project-name>
-```
-
-## Manual Installation
-
-If you would still prefer to do the installation manually, follow these steps:
-
-Clone the repo:
-
-```bash
-git clone --depth 1 https://github.com/hagopj13/node-express-boilerplate.git
-cd node-express-boilerplate
-npx rimraf ./.git
-```
-
-Install the dependencies:
-
-```bash
+npm install
+# hoặc
 yarn install
 ```
 
-Set the environment variables:
+### 3. Cấu Hình Environment Variables
+
+Copy file `.env.example` thành `.env`:
 
 ```bash
 cp .env.example .env
-
-# open .env and modify the environment variables (if needed)
 ```
 
-## Table of Contents
+Cập nhật các biến môi trường trong file `.env`:
 
-- [Features](#features)
-- [Commands](#commands)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Validation](#validation)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Logging](#logging)
-- [Custom Mongoose Plugins](#custom-mongoose-plugins)
-- [Linting](#linting)
-- [Contributing](#contributing)
-
-## Features
-
-- **NoSQL database**: [MongoDB](https://www.mongodb.com) object data modeling using [Mongoose](https://mongoosejs.com)
-- **Authentication and authorization**: using [passport](http://www.passportjs.org)
-- **Validation**: request data validation using [Joi](https://github.com/hapijs/joi)
-- **Logging**: using [winston](https://github.com/winstonjs/winston) and [morgan](https://github.com/expressjs/morgan)
-- **Testing**: unit and integration tests using [Jest](https://jestjs.io)
-- **Error handling**: centralized error handling mechanism
-- **API documentation**: with [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) and [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
-- **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
-- **Dependency management**: with [Yarn](https://yarnpkg.com)
-- **Environment variables**: using [dotenv](https://github.com/motdotla/dotenv) and [cross-env](https://github.com/kentcdodds/cross-env#readme)
-- **Security**: set security HTTP headers using [helmet](https://helmetjs.github.io)
-- **Santizing**: sanitize request data against xss and query injection
-- **CORS**: Cross-Origin Resource-Sharing enabled using [cors](https://github.com/expressjs/cors)
-- **Compression**: gzip compression with [compression](https://github.com/expressjs/compression)
-- **CI**: continuous integration with [Travis CI](https://travis-ci.org)
-- **Docker support**
-- **Code coverage**: using [coveralls](https://coveralls.io)
-- **Code quality**: with [Codacy](https://www.codacy.com)
-- **Git hooks**: with [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
-- **Linting**: with [ESLint](https://eslint.org) and [Prettier](https://prettier.io)
-- **Editor config**: consistent editor configuration using [EditorConfig](https://editorconfig.org)
-
-## Commands
-
-Running locally:
-
-```bash
-yarn dev
-```
-
-Running in production:
-
-```bash
-yarn start
-```
-
-Testing:
-
-```bash
-# run all tests
-yarn test
-
-# run all tests in watch mode
-yarn test:watch
-
-# run test coverage
-yarn coverage
-```
-
-Docker:
-
-```bash
-# run docker container in development mode
-yarn docker:dev
-
-# run docker container in production mode
-yarn docker:prod
-
-# run all tests in a docker container
-yarn docker:test
-```
-
-Linting:
-
-```bash
-# run ESLint
-yarn lint
-
-# fix ESLint errors
-yarn lint:fix
-
-# run prettier
-yarn prettier
-
-# fix prettier errors
-yarn prettier:fix
-```
-
-## Environment Variables
-
-The environment variables can be found and modified in the `.env` file. They come with these default values:
-
-```bash
-# Port number
+```env
+# Server
+NODE_ENV=development
 PORT=3000
 
-# URL of the Mongo DB
-MONGODB_URL=mongodb://127.0.0.1:27017/node-boilerplate
+# Database
+MONGODB_URL=mongodb://127.0.0.1:27017/skillar
 
 # JWT
-# JWT secret key
-JWT_SECRET=thisisasamplesecret
-# Number of minutes after which an access token expires
+JWT_SECRET=your-secret-key-here
 JWT_ACCESS_EXPIRATION_MINUTES=30
-# Number of days after which a refresh token expires
 JWT_REFRESH_EXPIRATION_DAYS=30
+JWT_RESET_PASSWORD_EXPIRATION_MINUTES=10
+JWT_VERIFY_EMAIL_EXPIRATION_MINUTES=10
 
-# SMTP configuration options for the email service
-# For testing, you can use a fake SMTP service like Ethereal: https://ethereal.email/create
-SMTP_HOST=email-server
+# SMTP (Email)
+SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USERNAME=email-server-username
-SMTP_PASSWORD=email-server-password
-EMAIL_FROM=support@yourapp.com
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+EMAIL_FROM=noreply@skillar.com
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
-## Project Structure
+### 4. Chạy Server
 
-```
-src\
- |--config\         # Environment variables and configuration related things
- |--controllers\    # Route controllers (controller layer)
- |--docs\           # Swagger files
- |--middlewares\    # Custom express middlewares
- |--models\         # Mongoose models (data layer)
- |--routes\         # Routes
- |--services\       # Business logic (service layer)
- |--utils\          # Utility classes and functions
- |--validations\    # Request data validation schemas
- |--app.js          # Express app
- |--index.js        # App entry point
+**Development mode (with nodemon auto-reload):**
+
+```bash
+npm run dev
 ```
 
-## API Documentation
+**Production mode:**
 
-To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser. This documentation page is automatically generated using the [swagger](https://swagger.io/) definitions written as comments in the route files.
-
-### API Endpoints
-
-List of available routes:
-
-**Auth routes**:\
-`POST /v1/auth/register` - register\
-`POST /v1/auth/login` - login\
-`POST /v1/auth/refresh-tokens` - refresh auth tokens\
-`POST /v1/auth/forgot-password` - send reset password email\
-`POST /v1/auth/reset-password` - reset password\
-`POST /v1/auth/send-verification-email` - send verification email\
-`POST /v1/auth/verify-email` - verify email
-
-**User routes**:\
-`POST /v1/users` - create a user\
-`GET /v1/users` - get all users\
-`GET /v1/users/:userId` - get user\
-`PATCH /v1/users/:userId` - update user\
-`DELETE /v1/users/:userId` - delete user
-
-## Error Handling
-
-The app has a centralized error handling mechanism.
-
-Controllers should try to catch the errors and forward them to the error handling middleware (by calling `next(error)`). For convenience, you can also wrap the controller inside the catchAsync utility wrapper, which forwards the error.
-
-```javascript
-const catchAsync = require('../utils/catchAsync');
-
-const controller = catchAsync(async (req, res) => {
-  // this error will be forwarded to the error handling middleware
-  throw new Error('Something wrong happened');
-});
+```bash
+npm start
 ```
 
-The error handling middleware sends an error response, which has the following format:
+**Using PM2:**
 
-```json
-{
-  "code": 404,
-  "message": "Not found"
-}
+```bash
+npm run start:pm2
 ```
 
-When running in development mode, the error response also contains the error stack.
+## 📚 API Documentation
 
-The app has a utility ApiError class to which you can attach a response code and a message, and then throw it from anywhere (catchAsync will catch it).
+Sau khi chạy server ở development mode, truy cập Swagger UI tại:
 
-For example, if you are trying to get a user from the DB who is not found, and you want to send a 404 error, the code should look something like:
-
-```javascript
-const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
-const User = require('../models/User');
-
-const getUser = async (userId) => {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-};
+```
+http://localhost:3000/v1/docs
 ```
 
-## Validation
+### API Endpoints Overview
 
-Request data is validated using [Joi](https://joi.dev/). Check the [documentation](https://joi.dev/api/) for more details on how to write Joi validation schemas.
+#### Authentication (`/v1/auth`)
 
-The validation schemas are defined in the `src/validations` directory and are used in the routes by providing them as parameters to the `validate` middleware.
+- `POST /register` - Đăng ký tài khoản mới
+- `POST /login` - Đăng nhập
+- `POST /logout` - Đăng xuất
+- `POST /refresh-tokens` - Refresh access token
+- `POST /forgot-password` - Yêu cầu reset password
+- `POST /reset-password` - Reset password
+- `POST /send-verification-email` - Gửi email xác thực
+- `POST /verify-email` - Xác thực email
 
-```javascript
-const express = require('express');
-const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
-const userController = require('../../controllers/user.controller');
+#### Users (`/v1/users`)
 
-const router = express.Router();
+- `POST /` - Tạo user mới (admin only)
+- `GET /` - Lấy danh sách users (admin only)
+- `GET /stats` - Thống kê users theo role (admin only)
+- `GET /:userId` - Lấy thông tin user
+- `PATCH /:userId` - Cập nhật user (admin only)
+- `DELETE /:userId` - Xóa user (admin only)
 
-router.post('/users', validate(userValidation.createUser), userController.createUser);
+#### Schedules (`/v1/schedules`)
+
+- `POST /` - Tạo lịch học (admin only)
+- `GET /` - Lấy danh sách lịch học
+- `GET /stats/today` - Số lịch học hôm nay (admin only)
+- `GET /stats/dashboard` - Dashboard statistics (admin only)
+- `GET /stats/students-per-week` - Thống kê học sinh/tuần (admin only)
+- `GET /stats/schedules-per-month` - Thống kê lịch học/tháng (admin only)
+- `GET /:scheduleId` - Lấy chi tiết lịch học
+- `PATCH /:scheduleId` - Cập nhật lịch học (admin only)
+- `DELETE /:scheduleId` - Xóa lịch học (admin only)
+
+#### Assignments (`/v1/assignments`)
+
+- `POST /` - Tạo assignment (admin, tutor)
+- `GET /` - Lấy danh sách assignments
+- `GET /:assignmentId` - Lấy chi tiết assignment
+- `PATCH /:assignmentId` - Cập nhật assignment (admin, tutor)
+- `DELETE /:assignmentId` - Xóa assignment (admin only)
+- `PATCH /:assignmentId/tasks/:taskId/submit` - Submit task (student, admin)
+
+#### Homeworks (`/v1/homeworks`)
+
+- `POST /` - Tạo homework (admin, tutor)
+- `GET /` - Lấy danh sách homeworks
+- `GET /:homeworkId` - Lấy chi tiết homework
+- `PATCH /:homeworkId` - Cập nhật homework (admin, tutor)
+- `DELETE /:homeworkId` - Xóa homework (admin only)
+- `PATCH /:homeworkId/tasks/:taskId/submit` - Submit homework (student, admin)
+
+#### Reviews (`/v1/reviews`)
+
+- `POST /` - Tạo review (tutor, admin)
+- `GET /` - Lấy danh sách reviews
+- `GET /:reviewId` - Lấy chi tiết review
+- `PATCH /:reviewId` - Cập nhật review (tutor, admin)
+- `DELETE /:reviewId` - Xóa review (admin only)
+
+#### Student Info (`/v1/students/:userId/info`)
+
+- `POST /` - Tạo student info (admin only)
+- `GET /` - Lấy student info
+- `PATCH /` - Cập nhật student info (admin only)
+- `DELETE /` - Xóa student info (admin only)
+
+#### Tutor Info (`/v1/tutors/:userId/info`)
+
+- `POST /` - Tạo tutor info (admin only)
+- `GET /` - Lấy tutor info
+- `PATCH /` - Cập nhật tutor info (admin, tutor)
+- `DELETE /` - Xóa tutor info (admin only)
+
+#### Files (`/v1/files`)
+
+- `POST /upload` - Upload một file (admin, student, tutor)
+- `POST /upload-multiple` - Upload nhiều files (admin, student, tutor)
+- `DELETE /:publicId` - Xóa file (admin only)
+
+## 🗂️ Cấu Trúc Thư Mục
+
+```
+src/
+├── config/          # Configuration files (database, cloudinary, logger, roles, etc.)
+├── controllers/     # Route controllers (xử lý HTTP requests)
+├── docs/            # Swagger documentation files
+├── middlewares/     # Custom Express middlewares (auth, error, validate, etc.)
+├── models/          # Mongoose models và schemas
+│   └── plugins/     # Mongoose plugins (toJSON, paginate)
+├── routes/          # API routes
+│   └── v1/          # Version 1 API routes
+├── services/        # Business logic layer
+├── utils/           # Utility functions (ApiError, catchAsync, pick, jitsi, etc.)
+├── validations/     # Joi validation schemas
+├── app.js           # Express app configuration
+└── index.js         # Entry point
 ```
 
-## Authentication
+## 🔑 User Roles & Permissions
 
-To require authentication for certain routes, you can use the `auth` middleware.
+Hệ thống có 4 loại user với quyền khác nhau:
 
-```javascript
-const express = require('express');
-const auth = require('../../middlewares/auth');
-const userController = require('../../controllers/user.controller');
+### Admin
 
-const router = express.Router();
+- Toàn quyền trên hệ thống
+- Quản lý tất cả users, schedules, assignments, homeworks, reviews
+- Xem thống kê và dashboard
+- Upload và xóa files
 
-router.post('/users', auth(), userController.createUser);
+### Tutor (Gia Sư)
+
+- Tạo và quản lý assignments, homeworks, reviews
+- Xem schedules của mình
+- Upload files
+- Cập nhật tutor info của mình
+
+### Student (Học Sinh)
+
+- Xem schedules, assignments, homeworks, reviews của mình
+- Submit assignments và homeworks
+- Upload files
+- Xem student info của mình
+
+### Parent (Phụ Huynh)
+
+- Xem schedules, assignments, homeworks, reviews của con
+- Xem student info của con
+
+## 🧪 Testing
+
+```bash
+# Chạy tất cả tests
+npm test
+
+# Chạy tests ở watch mode
+npm run test:watch
+
+# Xem test coverage
+npm run coverage
 ```
 
-These routes require a valid JWT access token in the Authorization request header using the Bearer schema. If the request does not contain a valid access token, an Unauthorized (401) error is thrown.
+## 🐳 Docker
 
-**Generating Access Tokens**:
+```bash
+# Development mode
+npm run docker:dev
 
-An access token can be generated by making a successful call to the register (`POST /v1/auth/register`) or login (`POST /v1/auth/login`) endpoints. The response of these endpoints also contains refresh tokens (explained below).
+# Production mode
+npm run docker:prod
 
-An access token is valid for 30 minutes. You can modify this expiration time by changing the `JWT_ACCESS_EXPIRATION_MINUTES` environment variable in the .env file.
-
-**Refreshing Access Tokens**:
-
-After the access token expires, a new access token can be generated, by making a call to the refresh token endpoint (`POST /v1/auth/refresh-tokens`) and sending along a valid refresh token in the request body. This call returns a new access token and a new refresh token.
-
-A refresh token is valid for 30 days. You can modify this expiration time by changing the `JWT_REFRESH_EXPIRATION_DAYS` environment variable in the .env file.
-
-## Authorization
-
-The `auth` middleware can also be used to require certain rights/permissions to access a route.
-
-```javascript
-const express = require('express');
-const auth = require('../../middlewares/auth');
-const userController = require('../../controllers/user.controller');
-
-const router = express.Router();
-
-router.post('/users', auth('manageUsers'), userController.createUser);
+# Run tests in Docker
+npm run docker:test
 ```
 
-In the example above, an authenticated user can access this route only if that user has the `manageUsers` permission.
+## 🔧 Linting & Code Quality
 
-The permissions are role-based. You can view the permissions/rights of each role in the `src/config/roles.js` file.
+```bash
+# Run ESLint
+npm run lint
 
-If the user making the request does not have the required permissions to access this route, a Forbidden (403) error is thrown.
+# Fix ESLint errors
+npm run lint:fix
 
-## Logging
+# Run Prettier
+npm run prettier
 
-Import the logger from `src/config/logger.js`. It is using the [Winston](https://github.com/winstonjs/winston) logging library.
-
-Logging should be done according to the following severity levels (ascending order from most important to least important):
-
-```javascript
-const logger = require('<path to src>/config/logger');
-
-logger.error('message'); // level 0
-logger.warn('message'); // level 1
-logger.info('message'); // level 2
-logger.http('message'); // level 3
-logger.verbose('message'); // level 4
-logger.debug('message'); // level 5
+# Fix Prettier errors
+npm run prettier:fix
 ```
 
-In development mode, log messages of all severity levels will be printed to the console.
+## 🌐 Environment Support
 
-In production mode, only `info`, `warn`, and `error` logs will be printed to the console.\
-It is up to the server (or process manager) to actually read them from the console and store them in log files.\
-This app uses pm2 in production mode, which is already configured to store the logs in log files.
+- **Development**: Full logging, Swagger docs, auto-reload với nodemon
+- **Production**: Optimized logging, PM2 process management, security headers
 
-Note: API request information (request url, response code, timestamp, etc.) are also automatically logged (using [morgan](https://github.com/expressjs/morgan)).
+## 📦 Key Dependencies
 
-## Custom Mongoose Plugins
+- **express**: ^4.17.1 - Web framework
+- **mongoose**: ^5.13.2 - MongoDB ODM
+- **passport-jwt**: ^4.0.0 - JWT authentication
+- **joi**: ^17.4.0 - Validation
+- **winston**: ^3.3.3 - Logging
+- **cloudinary**: ^1.26.2 - File storage
+- **swagger-jsdoc**: ^6.1.0 - API documentation
+- **helmet**: ^4.6.0 - Security headers
+- **cors**: ^2.8.5 - CORS handling
+- **compression**: ^1.7.4 - Response compression
 
-The app also contains 2 custom mongoose plugins that you can attach to any mongoose model schema. You can find the plugins in `src/models/plugins`.
+## 🔒 Security Features
 
-```javascript
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+- **Helmet**: Set security HTTP headers
+- **CORS**: Cross-Origin Resource Sharing configured
+- **XSS Protection**: xss-clean middleware
+- **NoSQL Injection Prevention**: express-mongo-sanitize
+- **Rate Limiting**: express-rate-limit (có thể config)
+- **JWT**: Secure token-based authentication
 
-const userSchema = mongoose.Schema(
-  {
-    /* schema definition here */
-  },
-  { timestamps: true }
-);
+## 📝 Logging
 
-userSchema.plugin(toJSON);
-userSchema.plugin(paginate);
+Logs được lưu bằng Winston với các levels:
 
-const User = mongoose.model('User', userSchema);
+- `error`: Level 0 (cao nhất)
+- `warn`: Level 1
+- `info`: Level 2
+- `http`: Level 3
+- `verbose`: Level 4
+- `debug`: Level 5
+
+Development mode: Tất cả logs được in ra console
+Production mode: Chỉ `info`, `warn`, `error` được log
+
+## 🚀 Deployment
+
+### PM2 (Recommended)
+
+```bash
+# Start with PM2
+npm run start:pm2
+
+# Stop
+npm run stop:pm2
+
+# Restart
+pm2 restart skillar-api
+
+# View logs
+pm2 logs skillar-api
 ```
 
-### toJSON
+### Manual Deployment
 
-The toJSON plugin applies the following changes in the toJSON transform call:
+1. Set `NODE_ENV=production` trong .env
+2. Cài đặt dependencies: `npm ci --only=production`
+3. Chạy: `npm start`
 
-- removes \_\_v, createdAt, updatedAt, and any schema path that has private: true
-- replaces \_id with id
+## 📖 Additional Documentation
 
-### paginate
+- [API Documentation](http://localhost:3000/v1/docs) (khi chạy dev server)
+- [Swagger Comparison Report](swagger_api_comparison.md)
 
-The paginate plugin adds the `paginate` static method to the mongoose schema.
+## 🤝 Contributing
 
-Adding this plugin to the `User` model schema will allow you to do the following:
+1. Fork repository
+2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-```javascript
-const queryUsers = async (filter, options) => {
-  const users = await User.paginate(filter, options);
-  return users;
-};
-```
-
-The `filter` param is a regular mongo filter.
-
-The `options` param can have the following (optional) fields:
-
-```javascript
-const options = {
-  sortBy: 'name:desc', // sort order
-  limit: 5, // maximum results per page
-  page: 2, // page number
-};
-```
-
-The plugin also supports sorting by multiple criteria (separated by a comma): `sortBy: name:desc,role:asc`
-
-The `paginate` method returns a Promise, which fulfills with an object having the following properties:
-
-```json
-{
-  "results": [],
-  "page": 2,
-  "limit": 5,
-  "totalPages": 10,
-  "totalResults": 48
-}
-```
-
-## Linting
-
-Linting is done using [ESLint](https://eslint.org/) and [Prettier](https://prettier.io).
-
-In this app, ESLint is configured to follow the [Airbnb JavaScript style guide](https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb-base) with some modifications. It also extends [eslint-config-prettier](https://github.com/prettier/eslint-config-prettier) to turn off all rules that are unnecessary or might conflict with Prettier.
-
-To modify the ESLint configuration, update the `.eslintrc.json` file. To modify the Prettier configuration, update the `.prettierrc.json` file.
-
-To prevent a certain file or directory from being linted, add it to `.eslintignore` and `.prettierignore`.
-
-To maintain a consistent coding style across different IDEs, the project contains `.editorconfig`
-
-## Contributing
-
-Contributions are more than welcome! Please check out the [contributing guide](CONTRIBUTING.md).
-
-## Inspirations
-
-- [danielfsousa/express-rest-es2017-boilerplate](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
-- [madhums/node-express-mongoose](https://github.com/madhums/node-express-mongoose)
-- [kunalkapadia/express-mongoose-es6-rest-api](https://github.com/kunalkapadia/express-mongoose-es6-rest-api)
-
-## License
+## 📄 License
 
 [MIT](LICENSE)
+
+## 👨‍💻 Developers
+
+Phát triển bởi Skillar Team
+
+---
+
+**Note**: Đây là backend API, cần kết hợp với frontend client để có ứng dụng hoàn chỉnh.

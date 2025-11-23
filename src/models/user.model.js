@@ -59,6 +59,18 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    avatarUrl: {
+      type: String,
+      trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    currentLevel: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

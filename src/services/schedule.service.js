@@ -2,6 +2,7 @@ const moment = require('moment');
 const httpStatus = require('http-status');
 const { Schedule } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { generateMeetingUrl } = require('../utils/jitsi');
 
 /**
  * Create a schedule
@@ -9,6 +10,14 @@ const ApiError = require('../utils/ApiError');
  * @returns {Promise<Schedule>}
  */
 const createSchedule = async (scheduleBody) => {
+  // Auto-generate Jitsi meeting URL if not provided
+  if (!scheduleBody.meetingURL) {
+    scheduleBody.meetingURL = generateMeetingUrl({
+      date: scheduleBody.startTime,
+      prefix: 'skillar-lesson',
+    });
+  }
+  
   return Schedule.create(scheduleBody);
 };
 

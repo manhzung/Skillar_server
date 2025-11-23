@@ -1,3 +1,9 @@
 module.exports.authController = require('./auth.controller');
 module.exports.userController = require('./user.controller');
 module.exports.scheduleController = require('./schedule.controller');
+module.exports.studentInfoController = require('./studentInfo.controller');
+module.exports.tutorInfoController = require('./tutorInfo.controller');
+module.exports.assignmentController = require('./assignment.controller');
+module.exports.homeworkController = require('./homework.controller');
+module.exports.reviewController = require('./review.controller');
+module.exports.fileController = require('./file.controller');

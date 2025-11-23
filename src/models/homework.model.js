@@ -54,6 +54,15 @@ const homeworkSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
+    difficulty: {
+      type: String,
+      enum: ['easy', 'medium', 'hard', 'advanced'],
+      trim: true,
+    },
+    subject: {
+      type: String,
+      trim: true,
+    },
     tasks: [homeworkDetailSchema],
   },
   {

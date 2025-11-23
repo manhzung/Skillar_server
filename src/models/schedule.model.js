@@ -26,6 +26,19 @@ const scheduleSchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    meetingURL: {
+      type: String,
+      trim: true,
+    },
+    note: {
+      type: String,
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
+      default: 'upcoming',
+    },
   },
   {
     timestamps: true,

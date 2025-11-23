@@ -8,30 +8,30 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageUsers'), validate(scheduleValidation.createSchedule), scheduleController.createSchedule)
-  .get(auth('getUsers'), validate(scheduleValidation.getSchedules), scheduleController.getSchedules);
+  .post(auth(['admin']), validate(scheduleValidation.createSchedule), scheduleController.createSchedule)
+  .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedules), scheduleController.getSchedules);
 
 router
   .route('/stats/today')
-  .get(auth('getUsers'), scheduleController.getTodaySchedulesCount);
+  .get(auth(['admin']), scheduleController.getTodaySchedulesCount);
 
 router
   .route('/stats/dashboard')
-  .get(auth('getUsers'), scheduleController.getDashboardStats);
+  .get(auth(['admin']), scheduleController.getDashboardStats);
 
 router
   .route('/stats/students-per-week')
-  .get(auth('getUsers'), scheduleController.getStudentsPerWeek);
+  .get(auth(['admin']), scheduleController.getStudentsPerWeek);
 
 router
   .route('/stats/schedules-per-month')
-  .get(auth('getUsers'), scheduleController.getSchedulesPerMonth);
+  .get(auth(['admin']), scheduleController.getSchedulesPerMonth);
 
 router
   .route('/:scheduleId')
-  .get(auth('getUsers'), validate(scheduleValidation.getSchedule), scheduleController.getSchedule)
-  .patch(auth('manageUsers'), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
-  .delete(auth('manageUsers'), validate(scheduleValidation.deleteSchedule), scheduleController.deleteSchedule);
+  .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedule), scheduleController.getSchedule)
+  .patch(auth(['admin']), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
+  .delete(auth(['admin']), validate(scheduleValidation.deleteSchedule), scheduleController.deleteSchedule);
 
 module.exports = router;
 
@@ -47,7 +47,7 @@ module.exports = router;
  * /schedules:
  *   post:
  *     summary: Create a schedule
- *     description: Only admins can create schedules.
+ *     description: Only admins can create schedules. If meetingURL is not provided, a Jitsi Meet link will be auto-generated.
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -80,12 +80,23 @@ module.exports = router;
  *               tutorId:
  *                 type: string
  *                 description: Tutor user ID
+ *               meetingURL:
+ *                 type: string
+ *                 description: Meeting URL (auto-generated Jitsi link if not provided)
+ *               note:
+ *                 type: string
+ *                 description: Additional notes
+ *               status:
+ *                 type: string
+ *                 enum: [upcoming, ongoing, completed, cancelled]
+ *                 description: Schedule status
  *             example:
  *               startTime: '2024-11-22T14:00:00.000Z'
  *               duration: 60
  *               subjectCode: 'MATH101'
  *               studentId: '5ebac534954b54139806c112'
  *               tutorId: '5ebac534954b54139806c114'
+ *               note: 'Ôn tập giải hệ phương trình'
  *     responses:
  *       "201":
  *         description: Created
@@ -93,6 +104,15 @@ module.exports = router;
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Schedule'
+ *             example:
+ *               id: '507f1f77bcf86cd799439040'
+ *               startTime: '2024-11-22T14:00:00.000Z'
+ *               duration: 60
+ *               subjectCode: 'MATH101'
+ *               studentId: '5ebac534954b54139806c112'
+ *               tutorId: '5ebac534954b54139806c114'
+ *               meetingURL: 'https://meet.jit.si/skillar-lesson-1700662800000-a1b2c3d4'
+ *               status: 'upcoming'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

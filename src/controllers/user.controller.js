@@ -12,6 +12,12 @@ const createUser = catchAsync(async (req, res) => {
 const getUsers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
+  
+  // Convert name filter to regex for partial matching (case-insensitive)
+  if (filter.name) {
+    filter.name = { $regex: filter.name, $options: 'i' };
+  }
+  
   const result = await userService.queryUsers(filter, options);
   res.send(result);
 });

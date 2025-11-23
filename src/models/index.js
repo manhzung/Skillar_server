@@ -5,3 +5,5 @@ module.exports.Homework = require('./homework.model');
 module.exports.Review = require('./review.model');
 module.exports.HomeworkReview = require('./homeworkReview.model');
 module.exports.Schedule = require('./schedule.model');
+module.exports.StudentInfo = require('./studentInfo.model');
+module.exports.TutorInfo = require('./tutorInfo.model');
