@@ -347,7 +347,12 @@ components:
           type: string
         grade:
           type: string
-        parentId:
+        parentName:
+          type: string
+        parentEmail:
+          type: string
+          format: email
+        parentNumber:
           type: string
         parentRequest:
           type: string
@@ -380,7 +385,9 @@ components:
         userId: '5ebac534954b54139806c112'
         school: 'Hanoi High School'
         grade: 'Grade 10'
-        parentId: '5ebac534954b54139806c115'
+        parentName: 'Nguyen Van B'
+        parentEmail: 'parent@example.com'
+        parentNumber: '+84987654321'
         parentRequest: 'Focus on math improvement'
         hobbies: ['Reading', 'Soccer']
         favoriteSubjects: ['Math', 'Physics']

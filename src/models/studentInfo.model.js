@@ -17,9 +17,18 @@ const studentInfoSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    parentId: {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: 'User',
+    parentName: {
+      type: String,
+      trim: true,
+    },
+    parentEmail: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    parentNumber: {
+      type: String,
+      trim: true,
     },
     parentRequest: {
       type: String,

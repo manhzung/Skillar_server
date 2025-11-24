@@ -8,7 +8,9 @@ const createStudentInfo = {
   body: Joi.object().keys({
     school: Joi.string(),
     grade: Joi.string(),
-    parentId: Joi.string().custom(objectId),
+    parentName: Joi.string(),
+    parentEmail: Joi.string().email(),
+    parentNumber: Joi.string(),
     parentRequest: Joi.string(),
     hobbies: Joi.array().items(Joi.string()),
     favoriteSubjects: Joi.array().items(Joi.string()),
@@ -32,7 +34,9 @@ const updateStudentInfo = {
     .keys({
       school: Joi.string(),
       grade: Joi.string(),
-      parentId: Joi.string().custom(objectId),
+      parentName: Joi.string(),
+      parentEmail: Joi.string().email(),
+      parentNumber: Joi.string(),
       parentRequest: Joi.string(),
       hobbies: Joi.array().items(Joi.string()),
       favoriteSubjects: Joi.array().items(Joi.string()),

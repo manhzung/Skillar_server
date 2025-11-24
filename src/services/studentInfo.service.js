@@ -39,8 +39,7 @@ const createStudentInfo = async (userId, studentInfoBody) => {
  */
 const getStudentInfoByUserId = async (userId) => {
   const studentInfo = await StudentInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address currentLevel')
-    .populate('parentId', 'name email phone');
+    .populate('userId', 'name email role phone avatarUrl address currentLevel');
   return studentInfo;
 };
 
@@ -60,8 +59,7 @@ const updateStudentInfoByUserId = async (userId, updateBody) => {
   await studentInfo.save();
   
   return StudentInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address currentLevel')
-    .populate('parentId', 'name email phone');
+    .populate('userId', 'name email role phone avatarUrl address currentLevel');
 };
 
 /**

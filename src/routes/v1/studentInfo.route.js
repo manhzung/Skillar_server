@@ -51,9 +51,16 @@ module.exports = router;
  *               grade:
  *                 type: string
  *                 description: Current grade/class
- *               parentId:
+ *               parentName:
  *                 type: string
- *                 description: Parent user ID reference
+ *                 description: Parent's full name
+ *               parentEmail:
+ *                 type: string
+ *                 format: email
+ *                 description: Parent's email address
+ *               parentNumber:
+ *                 type: string
+ *                 description: Parent's phone number
  *               parentRequest:
  *                 type: string
  *                 description: Parent's requests or expectations
@@ -83,7 +90,9 @@ module.exports = router;
  *             example:
  *               school: "THCS Nguyễn Du"
  *               grade: "Lớp 7A1"
- *               parentId: "507f1f77bcf86cd799439030"
+ *               parentName: "Nguyễn Văn B"
+ *               parentEmail: "parent@example.com"
+ *               parentNumber: "+84987654321"
  *               parentRequest: "Cải thiện khả năng trình bày"
  *               hobbies: ["Bóng đá", "Âm nhạc"]
  *               favoriteSubjects: ["Toán", "Vật lý"]
@@ -157,7 +166,12 @@ module.exports = router;
  *                 type: string
  *               grade:
  *                 type: string
- *               parentId:
+ *               parentName:
+ *                 type: string
+ *               parentEmail:
+ *                 type: string
+ *                 format: email
+ *               parentNumber:
  *                 type: string
  *               parentRequest:
  *                 type: string
@@ -254,17 +268,13 @@ module.exports = router;
  *           type: string
  *         grade:
  *           type: string
- *         parentId:
- *           type: object
- *           properties:
- *             id:
- *               type: string
- *             name:
- *               type: string
- *             email:
- *               type: string
- *             phone:
- *               type: string
+ *         parentName:
+ *           type: string
+ *         parentEmail:
+ *           type: string
+ *           format: email
+ *         parentNumber:
+ *           type: string
  *         parentRequest:
  *           type: string
  *         hobbies:
@@ -300,9 +310,9 @@ module.exports = router;
  *           role: "student"
  *         school: "THCS Nguyễn Du"
  *         grade: "Lớp 7A1"
- *         parentId:
- *           id: "507f1f77bcf86cd799439030"
- *           name: "Phạm Văn X"
+ *         parentName: "Phạm Văn X"
+ *         parentEmail: "parent@example.com"
+ *         parentNumber: "+84987654321"
  *         hobbies: ["Bóng đá", "Âm nhạc"]
  *         favoriteSubjects: ["Toán", "Vật lý"]
  */
