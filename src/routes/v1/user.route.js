@@ -24,6 +24,10 @@ router
   .get(auth(['admin']), userController.getTutorsPerSubject);
 
 router
+  .route('/stats/logged-in-count')
+  .get(auth(['admin']), userController.getLoggedInUserCount);
+
+router
   .route('/:userId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(userValidation.getUser), userController.getUser)
   .patch(auth(['admin']), validate(userValidation.updateUser), userController.updateUser)
@@ -352,6 +356,40 @@ module.exports = router;
  *                 tutorCount: 5
  *               - subject: "Hóa học"
  *                 tutorCount: 4
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * /users/stats/logged-in-count:
+ *   get:
+ *     summary: Get count of currently logged in users
+ *     description: Count users with valid refresh tokens. Can filter by role. Only admins can access this endpoint.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [student, tutor, parent, admin]
+ *         description: Filter by user role
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *             example:
+ *               count: 42
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

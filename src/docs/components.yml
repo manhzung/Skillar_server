@@ -356,6 +356,8 @@ components:
           type: string
         parentRequest:
           type: string
+        academicLevel:
+          type: string
         hobbies:
           type: array
           items:
@@ -389,6 +391,7 @@ components:
         parentEmail: 'parent@example.com'
         parentNumber: '+84987654321'
         parentRequest: 'Focus on math improvement'
+        academicLevel: 'Completed grade 9 curriculum, studying advanced topics'
         hobbies: ['Reading', 'Soccer']
         favoriteSubjects: ['Math', 'Physics']
         strengths: ['Logical thinking', 'Problem solving']

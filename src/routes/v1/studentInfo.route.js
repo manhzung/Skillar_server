@@ -64,6 +64,9 @@ module.exports = router;
  *               parentRequest:
  *                 type: string
  *                 description: Parent's requests or expectations
+ *               academicLevel:
+ *                 type: string
+ *                 description: Current academic level and progress description
  *               hobbies:
  *                 type: array
  *                 items:
@@ -94,6 +97,7 @@ module.exports = router;
  *               parentEmail: "parent@example.com"
  *               parentNumber: "+84987654321"
  *               parentRequest: "Cải thiện khả năng trình bày"
+ *               academicLevel: "Hoàn thành chương trình Toán lớp 6, đang ôn nâng cao"
  *               hobbies: ["Bóng đá", "Âm nhạc"]
  *               favoriteSubjects: ["Toán", "Vật lý"]
  *               strengths: ["Tư duy logic tốt"]
@@ -174,6 +178,8 @@ module.exports = router;
  *               parentNumber:
  *                 type: string
  *               parentRequest:
+ *                 type: string
+ *               academicLevel:
  *                 type: string
  *               hobbies:
  *                 type: array

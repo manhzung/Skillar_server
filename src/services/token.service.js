@@ -113,6 +113,51 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+/**
+ * Count logged in users (valid refresh tokens)
+ * @param {string} [role] - Optional role filter (student, tutor, etc.)
+ * @returns {Promise<number>}
+ */
+const countLoggedInUsers = async (role) => {
+  const matchStage = {
+    type: tokenTypes.REFRESH,
+    blacklisted: false,
+    expires: { $gt: new Date() },
+  };
+
+  const pipeline = [
+    { $match: matchStage },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'userInfo',
+      },
+    },
+    { $unwind: '$userInfo' },
+  ];
+
+  if (role) {
+    pipeline.push({
+      $match: { 'userInfo.role': role },
+    });
+  }
+
+  pipeline.push({
+    $group: {
+      _id: '$user',
+    },
+  });
+
+  pipeline.push({
+    $count: 'count',
+  });
+
+  const result = await Token.aggregate(pipeline);
+  return result.length > 0 ? result[0].count : 0;
+};
+
 module.exports = {
   generateToken,
   saveToken,
@@ -120,4 +165,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  countLoggedInUsers,
 };

@@ -34,6 +34,10 @@ const studentInfoSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    academicLevel: {
+      type: String,
+      trim: true,
+    },
     hobbies: {
       type: [String],
       default: [],
