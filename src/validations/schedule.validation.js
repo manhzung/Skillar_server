@@ -56,10 +56,17 @@ const deleteSchedule = {
     }),
 };
 
+const generateMeetingLink = {
+    params: Joi.object().keys({
+        scheduleId: Joi.string().custom(objectId).required(),
+    }),
+};
+
 module.exports = {
     createSchedule,
     getSchedules,
     getSchedule,
     updateSchedule,
     deleteSchedule,
+    generateMeetingLink,
 };

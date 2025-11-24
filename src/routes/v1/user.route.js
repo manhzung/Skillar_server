@@ -16,6 +16,14 @@ router
   .get(auth(['admin']), userController.getAllUserStats);
 
 router
+  .route('/stats/students-per-grade')
+  .get(auth(['admin']), userController.getStudentsPerGrade);
+
+router
+  .route('/stats/tutors-per-subject')
+  .get(auth(['admin']), userController.getTutorsPerSubject);
+
+router
   .route('/:userId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(userValidation.getUser), userController.getUser)
   .patch(auth(['admin']), validate(userValidation.updateUser), userController.updateUser)
@@ -255,6 +263,7 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  */
 
+
 /**
  * @swagger
  * /users/stats:
@@ -276,3 +285,76 @@ module.exports = router;
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  */
+
+/**
+ * @swagger
+ * /users/stats/students-per-grade:
+ *   get:
+ *     summary: Get students distribution by grade
+ *     description: Get the number of students in each grade/class. Only admins can access this endpoint.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   grade:
+ *                     type: string
+ *                   studentCount:
+ *                     type: integer
+ *             example:
+ *               - grade: "Lớp 6A"
+ *                 studentCount: 15
+ *               - grade: "Lớp 7B"
+ *                 studentCount: 12
+ *               - grade: "Lớp 8A"
+ *                 studentCount: 18
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * /users/stats/tutors-per-subject:
+ *   get:
+ *     summary: Get tutors distribution by subject
+ *     description: Get the number of tutors for each subject. Only admins can access this endpoint.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   subject:
+ *                     type: string
+ *                   tutorCount:
+ *                     type: integer
+ *             example:
+ *               - subject: "Toán"
+ *                 tutorCount: 8
+ *               - subject: "Vật lý"
+ *                 tutorCount: 5
+ *               - subject: "Hóa học"
+ *                 tutorCount: 4
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ */
+

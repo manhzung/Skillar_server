@@ -28,6 +28,10 @@ router
   .get(auth(['admin']), scheduleController.getSchedulesPerMonth);
 
 router
+  .route('/:scheduleId/generate-meeting-link')
+  .post(auth(['admin']), validate(scheduleValidation.generateMeetingLink), scheduleController.generateMeetingLink);
+
+router
   .route('/:scheduleId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedule), scheduleController.getSchedule)
   .patch(auth(['admin']), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
@@ -289,8 +293,50 @@ module.exports = router;
  *               $ref: '#/components/schemas/SchedulesPerMonthData'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
+ *       \"403\":
+ *         $ref: '#/components/responses/Forbidden'
+ */
+
+/**
+ * @swagger
+ * /schedules/{scheduleId}/generate-meeting-link:
+ *   post:
+ *     summary: Generate meeting link for schedule
+ *     description: Generate or regenerate a Jitsi meeting URL for an existing schedule. Only admins can perform this action.
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: scheduleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Schedule ID
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Schedule'
+ *             example:
+ *               id: '507f1f77bcf86cd799439040'
+ *               startTime: '2024-11-22T14:00:00.000Z'
+ *               duration: 60
+ *               subjectCode: 'MATH101'
+ *               studentId: '5ebac534954b54139806c112'
+ *               tutorId: '5ebac534954b54139806c114'
+ *               meetingURL: 'https://meet.jit.si/skillar-lesson-39040-a1b2c3d4'
+ *               status: 'upcoming'
+ *               createdAt: '2024-11-20T10:00:00.000Z'
+ *               updatedAt: '2024-11-22T12:00:00.000Z'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
  */
 
 /**

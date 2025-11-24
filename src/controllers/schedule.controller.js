@@ -56,6 +56,11 @@ const getSchedulesPerMonth = catchAsync(async (req, res) => {
   res.send(data);
 });
 
+const generateMeetingLink = catchAsync(async (req, res) => {
+  const schedule = await scheduleService.generateMeetingLink(req.params.scheduleId);
+  res.send(schedule);
+});
+
 module.exports = {
   createSchedule,
   getSchedules,
@@ -66,4 +71,5 @@ module.exports = {
   getDashboardStats,
   getStudentsPerWeek,
   getSchedulesPerMonth,
+  generateMeetingLink,
 };

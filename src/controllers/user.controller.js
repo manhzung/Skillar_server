@@ -50,6 +50,16 @@ const getAllUserStats = catchAsync(async (req, res) => {
   });
 });
 
+const getStudentsPerGrade = catchAsync(async (req, res) => {
+  const distribution = await userService.getStudentsPerGrade();
+  res.send(distribution);
+});
+
+const getTutorsPerSubject = catchAsync(async (req, res) => {
+  const distribution = await userService.getTutorsPerSubject();
+  res.send(distribution);
+});
+
 module.exports = {
   createUser,
   getUsers,
@@ -57,4 +67,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getAllUserStats,
+  getStudentsPerGrade,
+  getTutorsPerSubject,
 };

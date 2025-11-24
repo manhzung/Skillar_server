@@ -104,6 +104,77 @@ const countUsersByRole = async () => {
   return counts;
 };
 
+/**
+ * Get students distribution by grade
+ * @returns {Promise<Array>}
+ */
+const getStudentsPerGrade = async () => {
+  const { StudentInfo } = require('../models');
+  
+  const distribution = await StudentInfo.aggregate([
+    {
+      $match: {
+        grade: { $exists: true, $ne: null, $ne: '' }
+      }
+    },
+    {
+      $group: {
+        _id: '$grade',
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { _id: 1 }
+    },
+    {
+      $project: {
+        _id: 0,
+        grade: '$_id',
+        studentCount: '$count'
+      }
+    }
+  ]);
+
+  return distribution;
+};
+
+/**
+ * Get tutors distribution by subject
+ * @returns {Promise<Array>}
+ */
+const getTutorsPerSubject = async () => {
+  const { TutorInfo } = require('../models');
+  
+  const distribution = await TutorInfo.aggregate([
+    {
+      $match: {
+        subjects: { $exists: true, $ne: [] }
+      }
+    },
+    {
+      $unwind: '$subjects'
+    },
+    {
+      $group: {
+        _id: '$subjects',
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { count: -1 }
+    },
+    {
+      $project: {
+        _id: 0,
+        subject: '$_id',
+        tutorCount: '$count'
+      }
+    }
+  ]);
+
+  return distribution;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -113,4 +184,6 @@ module.exports = {
   deleteUserById,
   countUsers,
   countUsersByRole,
+  getStudentsPerGrade,
+  getTutorsPerSubject,
 };

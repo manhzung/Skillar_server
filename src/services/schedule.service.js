@@ -178,6 +178,31 @@ const getSchedulesPerMonth = async (months = 6) => {
   return monthsData;
 };
 
+/**
+ * Generate new meeting link for a schedule
+ * @param {ObjectId} scheduleId
+ * @returns {Promise<Schedule>}
+ */
+const generateMeetingLink = async (scheduleId) => {
+  const schedule = await getScheduleById(scheduleId);
+  if (!schedule) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
+  }
+  
+  // Generate new Jitsi meeting URL
+  const newMeetingURL = generateMeetingUrl({
+    scheduleId: scheduleId,
+    date: schedule.startTime,
+    prefix: 'skillar-lesson',
+  });
+  
+  // Update schedule with new meeting URL
+  schedule.meetingURL = newMeetingURL;
+  await schedule.save();
+  
+  return schedule;
+};
+
 module.exports = {
   createSchedule,
   querySchedules,
@@ -188,4 +213,5 @@ module.exports = {
   getDashboardStats,
   getStudentsPerWeek,
   getSchedulesPerMonth,
+  generateMeetingLink,
 };
