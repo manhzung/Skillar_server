@@ -18,9 +18,6 @@ const getSchedules = catchAsync(async (req, res) => {
 
 const getSchedule = catchAsync(async (req, res) => {
   const schedule = await scheduleService.getScheduleById(req.params.scheduleId);
-  if (!schedule) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
-  }
   res.send(schedule);
 });
 
@@ -61,6 +58,29 @@ const generateMeetingLink = catchAsync(async (req, res) => {
   res.send(schedule);
 });
 
+const getTodayLessonStats = catchAsync(async (req, res) => {
+  const stats = await scheduleService.getTodayLessonStats();
+  res.send(stats);
+});
+
+const getStudentDashboardStats = catchAsync(async (req, res) => {
+  const studentId = req.user.id;
+  const stats = await scheduleService.getStudentDashboardStats(studentId);
+  res.send(stats);
+});
+
+const getTimeAllocationBySubject = catchAsync(async (req, res) => {
+  const studentId = req.user.id;
+  const allocation = await scheduleService.getTimeAllocationBySubject(studentId);
+  res.send(allocation);
+});
+
+const getCompletedTasksBySubject = catchAsync(async (req, res) => {
+  const studentId = req.user.id;
+  const stats = await scheduleService.getCompletedTasksBySubject(studentId);
+  res.send(stats);
+});
+
 module.exports = {
   createSchedule,
   getSchedules,
@@ -72,4 +92,8 @@ module.exports = {
   getStudentsPerWeek,
   getSchedulesPerMonth,
   generateMeetingLink,
+  getTodayLessonStats,
+  getStudentDashboardStats,
+  getTimeAllocationBySubject,
+  getCompletedTasksBySubject,
 };

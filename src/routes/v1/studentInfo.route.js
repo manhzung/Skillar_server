@@ -13,21 +13,12 @@ router
   .patch(auth(['admin']), validate(studentInfoValidation.updateStudentInfo), studentInfoController.updateStudentInfo)
   .delete(auth(['admin']), validate(studentInfoValidation.deleteStudentInfo), studentInfoController.deleteStudentInfo);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: StudentInfo
- *   description: Student extended information management
- */
-
 /**
  * @swagger
  * /students/{userId}/info:
  *   post:
- *     summary: Create student info
- *     description: Only admins can create student extended information.
+ *     summary: Create student information
+ *     description: Only admins can create student information
  *     tags: [StudentInfo]
  *     security:
  *       - bearerAuth: []
@@ -37,9 +28,9 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the student
  *     requestBody:
- *       required: false
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -47,81 +38,109 @@ module.exports = router;
  *             properties:
  *               school:
  *                 type: string
- *                 description: School name
+ *                 example: "ABC High School"
  *               grade:
  *                 type: string
- *                 description: Current grade/class
+ *                 example: "Grade 10"
  *               parentName:
  *                 type: string
- *                 description: Parent's full name
+ *                 example: "John Parent"
  *               parentEmail:
  *                 type: string
  *                 format: email
- *                 description: Parent's email address
+ *                 example: "parent@example.com"
  *               parentNumber:
  *                 type: string
- *                 description: Parent's phone number
+ *                 example: "+84123456789"
  *               parentRequest:
  *                 type: string
- *                 description: Parent's requests or expectations
+ *                 example: "Focus on algebra"
  *               academicLevel:
  *                 type: string
- *                 description: Current academic level and progress description
+ *                 example: "Intermediate"
  *               hobbies:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Student's hobbies
+ *                 example: ["Reading", "Sports"]
  *               favoriteSubjects:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Favorite subjects
+ *                 example: ["Mathematics", "Physics"]
  *               strengths:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Student's strengths
+ *                 example: ["Problem solving", "Critical thinking"]
  *               improvements:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Areas for improvement
+ *                 example: ["Time management", "Note taking"]
  *               notes:
  *                 type: string
- *                 description: Additional notes
- *             example:
- *               school: "THCS Nguyễn Du"
- *               grade: "Lớp 7A1"
- *               parentName: "Nguyễn Văn B"
- *               parentEmail: "parent@example.com"
- *               parentNumber: "+84987654321"
- *               parentRequest: "Cải thiện khả năng trình bày"
- *               academicLevel: "Hoàn thành chương trình Toán lớp 6, đang ôn nâng cao"
- *               hobbies: ["Bóng đá", "Âm nhạc"]
- *               favoriteSubjects: ["Toán", "Vật lý"]
- *               strengths: ["Tư duy logic tốt"]
- *               improvements: ["Quản lý thời gian"]
- *               notes: "Học sinh tốt"
+ *                 example: "Student needs extra help with calculus"
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/StudentInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 school:
+ *                   type: string
+ *                 grade:
+ *                   type: string
+ *                 parentName:
+ *                   type: string
+ *                 parentEmail:
+ *                   type: string
+ *                 parentNumber:
+ *                   type: string
+ *                 parentRequest:
+ *                   type: string
+ *                 academicLevel:
+ *                   type: string
+ *                 hobbies:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 favoriteSubjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 strengths:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 improvements:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 notes:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Forbidden
  *
  *   get:
- *     summary: Get student info
- *     description: Admin, student, and parent can retrieve student information.
+ *     summary: Get student information
+ *     description: Students, parents, and admins can retrieve student information
  *     tags: [StudentInfo]
  *     security:
  *       - bearerAuth: []
@@ -131,24 +150,65 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the student
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/StudentInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 school:
+ *                   type: string
+ *                 grade:
+ *                   type: string
+ *                 parentName:
+ *                   type: string
+ *                 parentEmail:
+ *                   type: string
+ *                 parentNumber:
+ *                   type: string
+ *                 parentRequest:
+ *                   type: string
+ *                 academicLevel:
+ *                   type: string
+ *                 hobbies:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 favoriteSubjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 strengths:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 improvements:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 notes:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
- *     summary: Update student info
- *     description: Only admins can update student information.
+ *     summary: Update student information
+ *     description: Only admins can update student information
  *     tags: [StudentInfo]
  *     security:
  *       - bearerAuth: []
@@ -158,7 +218,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the student
  *     requestBody:
  *       required: true
  *       content:
@@ -199,28 +259,68 @@ module.exports = router;
  *                   type: string
  *               notes:
  *                 type: string
- *             example:
- *               grade: "Lớp 8A1"
- *               notes: "Đã cải thiện nhiều"
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/StudentInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 school:
+ *                   type: string
+ *                 grade:
+ *                   type: string
+ *                 parentName:
+ *                   type: string
+ *                 parentEmail:
+ *                   type: string
+ *                 parentNumber:
+ *                   type: string
+ *                 parentRequest:
+ *                   type: string
+ *                 academicLevel:
+ *                   type: string
+ *                 hobbies:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 favoriteSubjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 strengths:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 improvements:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 notes:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
- *     summary: Delete student info
- *     description: Only admins can delete student information.
+ *     summary: Delete student information
+ *     description: Only admins can delete student information
  *     tags: [StudentInfo]
  *     security:
  *       - bearerAuth: []
@@ -230,95 +330,17 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the student
  *     responses:
  *       "204":
- *         description: No content
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     StudentInfo:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         userId:
- *           type: object
- *           properties:
- *             id:
- *               type: string
- *             name:
- *               type: string
- *             email:
- *               type: string
- *             role:
- *               type: string
- *             phone:
- *               type: string
- *             avatarUrl:
- *               type: string
- *             address:
- *               type: string
- *             currentLevel:
- *               type: string
- *         school:
- *           type: string
- *         grade:
- *           type: string
- *         parentName:
- *           type: string
- *         parentEmail:
- *           type: string
- *           format: email
- *         parentNumber:
- *           type: string
- *         parentRequest:
- *           type: string
- *         hobbies:
- *           type: array
- *           items:
- *             type: string
- *         favoriteSubjects:
- *           type: array
- *           items:
- *             type: string
- *         strengths:
- *           type: array
- *           items:
- *             type: string
- *         improvements:
- *           type: array
- *           items:
- *             type: string
- *         notes:
- *           type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: "507f1f77bcf86cd799439020"
- *         userId:
- *           id: "507f1f77bcf86cd799439011"
- *           name: "Nguyễn Văn A"
- *           email: "student@skillar.com"
- *           role: "student"
- *         school: "THCS Nguyễn Du"
- *         grade: "Lớp 7A1"
- *         parentName: "Phạm Văn X"
- *         parentEmail: "parent@example.com"
- *         parentNumber: "+84987654321"
- *         hobbies: ["Bóng đá", "Âm nhạc"]
- *         favoriteSubjects: ["Toán", "Vật lý"]
- */
+module.exports = router;
+

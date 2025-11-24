@@ -18,9 +18,6 @@ const getHomeworks = catchAsync(async (req, res) => {
 
 const getHomework = catchAsync(async (req, res) => {
   const homework = await homeworkService.getHomeworkById(req.params.homeworkId);
-  if (!homework) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
-  }
   res.send(homework);
 });
 

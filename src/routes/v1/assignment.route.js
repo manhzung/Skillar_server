@@ -21,21 +21,16 @@ router
   .route('/:assignmentId/tasks/:taskId/submit')
   .patch(auth(['student','admin']), validate(assignmentValidation.submitTask), assignmentController.submitTask);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Assignments
- *   description: Assignment (checklist) management and grading
- */
+router
+  .route('/stats/today')
+  .get(auth(['admin', 'student', 'tutor']), assignmentController.getTodayAssignmentsStats);
 
 /**
  * @swagger
  * /assignments:
  *   post:
- *     summary: Create an assignment
- *     description: Admin and tutors can create assignments.
+ *     summary: Create a new assignment
+ *     description: Only admins and tutors can create assignments
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -51,16 +46,21 @@ module.exports = router;
  *             properties:
  *               scheduleId:
  *                 type: string
- *                 description: Schedule ID reference
+ *                 description: Schedule ID
+ *                 example: "507f1f77bcf86cd799439011"
  *               name:
  *                 type: string
+ *                 example: "Math Assignment 1"
  *               description:
  *                 type: string
+ *                 example: "Complete exercises 1-10"
  *               subject:
  *                 type: string
+ *                 example: "Mathematics"
  *               status:
  *                 type: string
  *                 enum: [pending, in-progress, completed]
+ *                 default: pending
  *               tasks:
  *                 type: array
  *                 items:
@@ -71,46 +71,89 @@ module.exports = router;
  *                   properties:
  *                     name:
  *                       type: string
+ *                       example: "Task 1"
  *                     estimatedTime:
  *                       type: integer
- *                       description: In minutes
+ *                       minimum: 1
+ *                       description: Estimated time in minutes
+ *                       example: 30
  *                     actualTime:
  *                       type: integer
+ *                       minimum: 0
+ *                       description: Actual time in minutes
+ *                       example: 25
  *                     assignmentUrl:
  *                       type: string
+ *                       format: uri
+ *                       example: "https://example.com/assignment.pdf"
  *                     solutionUrl:
  *                       type: string
+ *                       format: uri
+ *                       example: "https://example.com/solution.pdf"
  *                     status:
  *                       type: string
  *                       enum: [pending, in-progress, completed, submitted, graded]
+ *                       default: pending
  *                     description:
  *                       type: string
- *             example:
- *               scheduleId: "507f1f77bcf86cd799439040"
- *               name: "Bài tập buổi 1"
- *               description: "Giải hệ phương trình"
- *               subject: "Toán"
- *               tasks:
- *                 - name: "Bài 3 – Giải hệ bằng phương pháp thế"
- *                   estimatedTime: 10
- *                   assignmentUrl: "https://example.com/assignment.pdf"
+ *                       example: "Solve quadratic equations"
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Assignment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       estimatedTime:
+ *                         type: integer
+ *                       actualTime:
+ *                         type: integer
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Forbidden
  *
  *   get:
  *     summary: Get all assignments
- *     description: Admin, students, and tutors can retrieve assignments.
+ *     description: Logged in users can retrieve all assignments
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -120,6 +163,21 @@ module.exports = router;
  *         schema:
  *           type: string
  *         description: Filter by schedule ID
+ *       - in: query
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         description: Filter by student ID
+ *       - in: query
+ *         name: tutorId
+ *         schema:
+ *           type: string
+ *         description: Filter by tutor ID
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: Filter by name
  *       - in: query
  *         name: subject
  *         schema:
@@ -132,23 +190,33 @@ module.exports = router;
  *           enum: [pending, in-progress, completed]
  *         description: Filter by status
  *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Filter by start date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *         description: Filter by end date (must be after startDate)
+ *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
- *         description: sort by query in the form of field:desc/asc
+ *         description: Sort by field
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
  *         description: Maximum number of results
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 1
  *         description: Page number
  *     responses:
  *       "200":
@@ -161,7 +229,47 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Assignment'
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       scheduleId:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       subject:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       tasks:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             estimatedTime:
+ *                               type: integer
+ *                             actualTime:
+ *                               type: integer
+ *                             assignmentUrl:
+ *                               type: string
+ *                             solutionUrl:
+ *                               type: string
+ *                             status:
+ *                               type: string
+ *                             description:
+ *                               type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *                 page:
  *                   type: integer
  *                 limit:
@@ -171,9 +279,103 @@ module.exports = router;
  *                 totalResults:
  *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /assignments/stats/today:
+ *   get:
+ *     summary: Get today's assignments statistics
+ *     description: Logged in users can access today's assignment statistics
+ *     tags: [Assignments]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 assignments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       scheduleId:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           studentId:
+ *                             type: object
+ *                           tutorId:
+ *                             type: object
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       subject:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       tasks:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             estimatedTime:
+ *                               type: integer
+ *                             actualTime:
+ *                               type: integer
+ *                             assignmentUrl:
+ *                               type: string
+ *                             solutionUrl:
+ *                               type: string
+ *                             status:
+ *                               type: string
+ *                             description:
+ *                               type: string
+ *                       taskStats:
+ *                         type: object
+ *                         properties:
+ *                           completed:
+ *                             type: integer
+ *                           total:
+ *                             type: integer
+ *                           percentage:
+ *                             type: integer
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 subjectStats:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       subject:
+ *                         type: string
+ *                       totalAssignments:
+ *                         type: integer
+ *                       totalTasks:
+ *                         type: integer
+ *                       completedTasks:
+ *                         type: integer
+ *                       completionPercentage:
+ *                         type: integer
+ *       "401":
+ *         description: Unauthorized
  */
 
 /**
@@ -181,7 +383,7 @@ module.exports = router;
  * /assignments/{assignmentId}:
  *   get:
  *     summary: Get an assignment
- *     description: Admin, students, and tutors can fetch assignment details.
+ *     description: Logged in users can fetch assignment information
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -198,17 +400,55 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Assignment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       estimatedTime:
+ *                         type: integer
+ *                       actualTime:
+ *                         type: integer
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
  *     summary: Update an assignment
- *     description: Admin and tutors can update assignments.
+ *     description: Only admins and tutors can update assignments
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -239,25 +479,85 @@ module.exports = router;
  *                 type: array
  *                 items:
  *                   type: object
- *             example:
- *               status: "completed"
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     estimatedTime:
+ *                       type: integer
+ *                       minimum: 1
+ *                     actualTime:
+ *                       type: integer
+ *                       minimum: 0
+ *                     assignmentUrl:
+ *                       type: string
+ *                       format: uri
+ *                     solutionUrl:
+ *                       type: string
+ *                       format: uri
+ *                     status:
+ *                       type: string
+ *                       enum: [pending, in-progress, completed, submitted, graded]
+ *                     description:
+ *                       type: string
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Assignment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       estimatedTime:
+ *                         type: integer
+ *                       actualTime:
+ *                         type: integer
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
  *     summary: Delete an assignment
- *     description: Only admins can delete assignments.
+ *     description: Only admins can delete assignments
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -270,21 +570,21 @@ module.exports = router;
  *         description: Assignment ID
  *     responses:
  *       "204":
- *         description: No content
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
 /**
  * @swagger
  * /assignments/{assignmentId}/tasks/{taskId}/submit:
  *   patch:
- *     summary: Submit assignment task
- *     description: Students can submit their assignment task solutions.
+ *     summary: Submit an assignment task
+ *     description: Students and admins can submit assignment tasks
  *     tags: [Assignments]
  *     security:
  *       - bearerAuth: []
@@ -310,91 +610,63 @@ module.exports = router;
  *             properties:
  *               actualTime:
  *                 type: integer
- *                 description: Time spent in minutes
+ *                 minimum: 0
+ *                 description: Actual time spent in minutes
+ *                 example: 25
  *               solutionUrl:
  *                 type: string
- *                 description: URL to solution file
+ *                 format: uri
+ *                 example: "https://example.com/solution.pdf"
  *               status:
  *                 type: string
  *                 enum: [submitted]
+ *                 example: submitted
  *               description:
  *                 type: string
- *             example:
- *               actualTime: 15
- *               solutionUrl: "https://example.com/my-solution.pdf"
- *               status: "submitted"
+ *                 example: "Completed the task"
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Assignment'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       estimatedTime:
+ *                         type: integer
+ *                       actualTime:
+ *                         type: integer
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Assignment:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         scheduleId:
- *           type: string
- *         name:
- *           type: string
- *         description:
- *           type: string
- *         subject:
- *           type: string
- *         status:
- *           type: string
- *           enum: [pending, in-progress, completed]
- *         tasks:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *               name:
- *                 type: string
- *               estimatedTime:
- *                 type: integer
- *               actualTime:
- *                 type: integer
- *               assignmentUrl:
- *                 type: string
- *               solutionUrl:
- *                 type: string
- *               status:
- *                 type: string
- *               description:
- *                 type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: "507f1f77bcf86cd799439050"
- *         scheduleId: "507f1f77bcf86cd799439040"
- *         name: "Bài tập buổi 1"
- *         subject: "Toán"
- *         status: "in-progress"
- *         tasks:
- *           - id: "507f1f77bcf86cd799439051"
- *             name: "Bài 3"
- *             estimatedTime: 10
- *             actualTime: 12
- *             status: "completed"
- */
+module.exports = router;

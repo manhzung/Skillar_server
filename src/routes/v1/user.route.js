@@ -33,21 +33,12 @@ router
   .patch(auth(['admin']), validate(userValidation.updateUser), userController.updateUser)
   .delete(auth(['admin']), validate(userValidation.deleteUser), userController.deleteUser);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: User management and retrieval
- */
-
 /**
  * @swagger
  * /users:
  *   post:
- *     summary: Create a user
- *     description: Only admins can create other users.
+ *     summary: Create a new user
+ *     description: Only admins can create users
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -58,47 +49,97 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - name
  *               - email
  *               - password
+ *               - name
  *               - role
  *             properties:
- *               name:
- *                 type: string
  *               email:
  *                 type: string
  *                 format: email
- *                 description: must be unique
+ *                 example: user@example.com
  *               password:
  *                 type: string
  *                 format: password
  *                 minLength: 8
- *                 description: At least one number and one letter
+ *                 description: Password must contain at least one letter and one number
+ *                 example: password123
+ *               name:
+ *                 type: string
+ *                 example: John Doe
  *               role:
- *                  type: string
- *                  enum: [student, parent, tutor, admin]
- *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
- *               role: student
+ *                 type: string
+ *                 enum: [student, parent, tutor, admin]
+ *                 example: student
+ *               phone:
+ *                 type: string
+ *                 example: "+84123456789"
+ *               birthday:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2000-01-01T00:00:00.000Z"
+ *               moreInfo:
+ *                 type: string
+ *                 example: "Additional information"
+ *               avatarUrl:
+ *                 type: string
+ *                 format: uri
+ *                 example: "https://example.com/avatar.jpg"
+ *               address:
+ *                 type: string
+ *                 example: "123 Main St"
+ *               currentLevel:
+ *                 type: string
+ *                 example: "Grade 10"
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 birthday:
+ *                   type: string
+ *                   format: date-time
+ *                 moreInfo:
+ *                   type: string
+ *                 isEmailVerified:
+ *                   type: boolean
+ *                 isActive:
+ *                   type: boolean
+ *                 avatarUrl:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 currentLevel:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *
  *   get:
  *     summary: Get all users
- *     description: Only admins can retrieve all users.
+ *     description: Only admins can retrieve all users
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -107,30 +148,29 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: User name
+ *         description: Filter by name (partial match, case-insensitive)
  *       - in: query
  *         name: role
  *         schema:
  *           type: string
- *         description: User role
+ *           enum: [student, parent, tutor, admin]
+ *         description: Filter by role
  *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
- *         description: sort by query in the form of field:desc/asc (ex. name:asc)
+ *         description: Sort by field (e.g., createdAt:desc)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
- *         description: Maximum number of users
+ *         description: Maximum number of results
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *           default: 1
  *         description: Page number
  *     responses:
  *       "200":
@@ -143,137 +183,59 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/User'
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       role:
+ *                         type: string
+ *                       phone:
+ *                         type: string
+ *                       birthday:
+ *                         type: string
+ *                         format: date-time
+ *                       moreInfo:
+ *                         type: string
+ *                       isEmailVerified:
+ *                         type: boolean
+ *                       isActive:
+ *                         type: boolean
+ *                       avatarUrl:
+ *                         type: string
+ *                       address:
+ *                         type: string
+ *                       currentLevel:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *                 page:
  *                   type: integer
- *                   example: 1
  *                 limit:
  *                   type: integer
- *                   example: 10
  *                 totalPages:
  *                   type: integer
- *                   example: 1
  *                 totalResults:
  *                   type: integer
- *                   example: 1
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
-
-/**
- * @swagger
- * /users/{id}:
- *   get:
- *     summary: Get a user
- *     description: Logged in users can fetch only their own user information. Only admins can fetch other users.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: User id
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/User'
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- *
- *   patch:
- *     summary: Update a user
- *     description: Logged in users can only update their own information. Only admins can update other users.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: User id
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *                 format: email
- *                 description: must be unique
- *               password:
- *                 type: string
- *                 format: password
- *                 minLength: 8
- *                 description: At least one number and one letter
- *             example:
- *               name: fake name
- *               email: fake@example.com
- *               password: password1
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/User'
- *       "400":
- *         $ref: '#/components/responses/DuplicateEmail'
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- *
- *   delete:
- *     summary: Delete a user
- *     description: Logged in users can delete only themselves. Only admins can delete other users.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: User id
- *     responses:
- *       "200":
- *         description: No content
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- */
-
 
 /**
  * @swagger
  * /users/stats:
  *   get:
- *     summary: Get user statistics
- *     description: Get counts of users by role. Only admins can access this endpoint.
+ *     summary: Get all user statistics
+ *     description: Only admins can access user statistics
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -283,11 +245,22 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserStats'
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                 student:
+ *                   type: integer
+ *                 parent:
+ *                   type: integer
+ *                 tutor:
+ *                   type: integer
+ *                 admin:
+ *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
@@ -295,7 +268,7 @@ module.exports = router;
  * /users/stats/students-per-grade:
  *   get:
  *     summary: Get students distribution by grade
- *     description: Get the number of students in each grade/class. Only admins can access this endpoint.
+ *     description: Only admins can access this statistic
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -311,19 +284,12 @@ module.exports = router;
  *                 properties:
  *                   grade:
  *                     type: string
- *                   studentCount:
+ *                   count:
  *                     type: integer
- *             example:
- *               - grade: "Lớp 6A"
- *                 studentCount: 15
- *               - grade: "Lớp 7B"
- *                 studentCount: 12
- *               - grade: "Lớp 8A"
- *                 studentCount: 18
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
@@ -331,7 +297,7 @@ module.exports = router;
  * /users/stats/tutors-per-subject:
  *   get:
  *     summary: Get tutors distribution by subject
- *     description: Get the number of tutors for each subject. Only admins can access this endpoint.
+ *     description: Only admins can access this statistic
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -347,27 +313,20 @@ module.exports = router;
  *                 properties:
  *                   subject:
  *                     type: string
- *                   tutorCount:
+ *                   count:
  *                     type: integer
- *             example:
- *               - subject: "Toán"
- *                 tutorCount: 8
- *               - subject: "Vật lý"
- *                 tutorCount: 5
- *               - subject: "Hóa học"
- *                 tutorCount: 4
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
  * @swagger
  * /users/stats/logged-in-count:
  *   get:
- *     summary: Get count of currently logged in users
- *     description: Count users with valid refresh tokens. Can filter by role. Only admins can access this endpoint.
+ *     summary: Get count of logged in users
+ *     description: Only admins can access this statistic
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -376,8 +335,8 @@ module.exports = router;
  *         name: role
  *         schema:
  *           type: string
- *           enum: [student, tutor, parent, admin]
- *         description: Filter by user role
+ *           enum: [student, parent, tutor, admin]
+ *         description: Filter by role
  *     responses:
  *       "200":
  *         description: OK
@@ -388,11 +347,188 @@ module.exports = router;
  *               properties:
  *                 count:
  *                   type: integer
- *             example:
- *               count: 42
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
+/**
+ * @swagger
+ * /users/{userId}:
+ *   get:
+ *     summary: Get a user
+ *     description: Logged in users can fetch their own user information. Admins can fetch any user.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 birthday:
+ *                   type: string
+ *                   format: date-time
+ *                 moreInfo:
+ *                   type: string
+ *                 isEmailVerified:
+ *                   type: boolean
+ *                 isActive:
+ *                   type: boolean
+ *                 avatarUrl:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 currentLevel:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ *       "404":
+ *         description: Not Found
+ *
+ *   patch:
+ *     summary: Update a user
+ *     description: Only admins can update users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 8
+ *                 description: Password must contain at least one letter and one number
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               birthday:
+ *                 type: string
+ *                 format: date-time
+ *               moreInfo:
+ *                 type: string
+ *               avatarUrl:
+ *                 type: string
+ *                 format: uri
+ *               address:
+ *                 type: string
+ *               currentLevel:
+ *                 type: string
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 birthday:
+ *                   type: string
+ *                   format: date-time
+ *                 moreInfo:
+ *                   type: string
+ *                 isEmailVerified:
+ *                   type: boolean
+ *                 isActive:
+ *                   type: boolean
+ *                 avatarUrl:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 currentLevel:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ *       "404":
+ *         description: Not Found
+ *
+ *   delete:
+ *     summary: Delete a user
+ *     description: Only admins can delete users
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     responses:
+ *       "204":
+ *         description: No Content
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ *       "404":
+ *         description: Not Found
+ */
+
+module.exports = router;

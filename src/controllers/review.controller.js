@@ -10,7 +10,7 @@ const createReview = catchAsync(async (req, res) => {
 });
 
 const getReviews = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['scheduleId']);
+  const filter = pick(req.query, ['scheduleId', 'studentId']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await reviewService.queryReviews(filter, options);
   res.send(result);
@@ -18,9 +18,6 @@ const getReviews = catchAsync(async (req, res) => {
 
 const getReview = catchAsync(async (req, res) => {
   const review = await reviewService.getReviewById(req.params.reviewId);
-  if (!review) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Review not found');
-  }
   res.send(review);
 });
 

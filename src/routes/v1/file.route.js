@@ -19,21 +19,12 @@ router
   .route('/:publicId')
   .delete(auth(['admin']), validate(fileValidation.deleteFile), fileController.deleteFile);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Files
- *   description: File upload and management using Cloudinary
- */
-
 /**
  * @swagger
  * /files/upload:
  *   post:
- *     summary: Upload a file
- *     description: Authenticated users can upload files (images, PDFs, documents) to Cloudinary.
+ *     summary: Upload a single file
+ *     description: Logged in users can upload files
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -49,7 +40,7 @@ module.exports = router;
  *               file:
  *                 type: string
  *                 format: binary
- *                 description: File to upload (max 10MB)
+ *                 description: File to upload
  *     responses:
  *       "201":
  *         description: Created
@@ -64,32 +55,23 @@ module.exports = router;
  *                 file:
  *                   type: object
  *                   properties:
- *                     url:
- *                       type: string
- *                       description: Cloudinary URL of uploaded file
  *                     publicId:
  *                       type: string
- *                       description: Cloudinary public ID
+ *                     url:
+ *                       type: string
+ *                       format: uri
  *                     format:
  *                       type: string
- *                     resourceType:
- *                       type: string
+ *                     width:
+ *                       type: integer
+ *                     height:
+ *                       type: integer
  *                     bytes:
  *                       type: integer
- *             example:
- *               message: "File uploaded successfully"
- *               file:
- *                 url: "https://res.cloudinary.com/demo/image/upload/v1/skillar/file123.jpg"
- *                 publicId: "skillar/file123"
- *                 format: "jpg"
- *                 resourceType: "image"
- *                 bytes: 204800
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  */
 
 /**
@@ -97,7 +79,7 @@ module.exports = router;
  * /files/upload-multiple:
  *   post:
  *     summary: Upload multiple files
- *     description: Authenticated users can upload up to 10 files at once.
+ *     description: Logged in users can upload multiple files (max 10)
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -115,7 +97,7 @@ module.exports = router;
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: Files to upload (max 10 files, 10MB each)
+ *                 description: Files to upload (max 10)
  *     responses:
  *       "201":
  *         description: Created
@@ -132,20 +114,23 @@ module.exports = router;
  *                   items:
  *                     type: object
  *                     properties:
- *                       url:
- *                         type: string
  *                       publicId:
  *                         type: string
+ *                       url:
+ *                         type: string
+ *                         format: uri
  *                       format:
  *                         type: string
- *                       resourceType:
- *                         type: string
+ *                       width:
+ *                         type: integer
+ *                       height:
+ *                         type: integer
  *                       bytes:
  *                         type: integer
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  */
 
 /**
@@ -153,7 +138,7 @@ module.exports = router;
  * /files/{publicId}:
  *   delete:
  *     summary: Delete a file
- *     description: Only admins can delete files from Cloudinary.
+ *     description: Only admins can delete files
  *     tags: [Files]
  *     security:
  *       - bearerAuth: []
@@ -163,8 +148,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Cloudinary public ID (e.g., "skillar/file123")
- *         example: "skillar/file123"
+ *         description: File public ID from Cloudinary
  *     responses:
  *       "200":
  *         description: OK
@@ -176,12 +160,13 @@ module.exports = router;
  *                 message:
  *                   type: string
  *                   example: "File deleted successfully"
- *       "400":
- *         $ref: '#/components/responses/BadRequest'
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "500":
- *         $ref: '#/components/responses/InternalServerError'
+ *         description: Forbidden
+ *       "404":
+ *         description: Not Found
  */
+
+module.exports = router;
+

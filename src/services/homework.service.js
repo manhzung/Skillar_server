@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { Homework, Schedule, User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { USER_ROLES, USER_SELECT_FIELDS } = require('../constants');
 
 /**
  * Create homework
@@ -19,7 +20,7 @@ const createHomework = async (homeworkBody) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Student not found');
   }
 
-  if (student.role !== 'student') {
+  if (student.role !== USER_ROLES.STUDENT) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User is not a student');
   }
 
@@ -44,9 +45,27 @@ const queryHomeworks = async (filter, options) => {
  * @returns {Promise<Homework>}
  */
 const getHomeworkById = async (id) => {
-  return Homework.findById(id)
-    .populate('studentId', 'name email role')
-    .populate('scheduleId');
+  const homework = await Homework.findById(id)
+    .populate('studentId', USER_SELECT_FIELDS)
+    .populate({
+      path: 'scheduleId',
+      populate: [
+        {
+          path: 'studentId',
+          select: USER_SELECT_FIELDS,
+        },
+        {
+          path: 'tutorId',
+          select: USER_SELECT_FIELDS,
+        },
+      ],
+    });
+  
+  if (!homework) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
+  }
+  
+  return homework;
 };
 
 /**
@@ -56,13 +75,29 @@ const getHomeworkById = async (id) => {
  * @returns {Promise<Homework>}
  */
 const updateHomeworkById = async (homeworkId, updateBody) => {
-  const homework = await getHomeworkById(homeworkId);
+  const homework = await Homework.findByIdAndUpdate(homeworkId, updateBody, {
+    new: true,
+    runValidators: true,
+  })
+    .populate('studentId', USER_SELECT_FIELDS)
+    .populate({
+      path: 'scheduleId',
+      populate: [
+        {
+          path: 'studentId',
+          select: USER_SELECT_FIELDS,
+        },
+        {
+          path: 'tutorId',
+          select: USER_SELECT_FIELDS,
+        },
+      ],
+    });
+  
   if (!homework) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
   }
-
-  Object.assign(homework, updateBody);
-  await homework.save();
+  
   return homework;
 };
 
@@ -72,11 +107,10 @@ const updateHomeworkById = async (homeworkId, updateBody) => {
  * @returns {Promise<Homework>}
  */
 const deleteHomeworkById = async (homeworkId) => {
-  const homework = await getHomeworkById(homeworkId);
+  const homework = await Homework.findByIdAndDelete(homeworkId);
   if (!homework) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
   }
-  await homework.remove();
   return homework;
 };
 
@@ -89,10 +123,7 @@ const deleteHomeworkById = async (homeworkId) => {
  */
 const submitHomeworkTask = async (homeworkId, taskId, submitData) => {
   const homework = await getHomeworkById(homeworkId);
-  if (!homework) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
-  }
-
+  
   const task = homework.tasks.id(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
@@ -100,7 +131,8 @@ const submitHomeworkTask = async (homeworkId, taskId, submitData) => {
 
   Object.assign(task, submitData);
   await homework.save();
-  return homework;
+  
+  return getHomeworkById(homeworkId);
 };
 
 module.exports = {

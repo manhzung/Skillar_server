@@ -28,6 +28,22 @@ router
   .get(auth(['admin']), scheduleController.getSchedulesPerMonth);
 
 router
+  .route('/stats/today-lessons')
+  .get(auth(['admin', 'student', 'parent', 'tutor']), scheduleController.getTodayLessonStats);
+
+router
+  .route('/stats/student-dashboard')
+  .get(auth(['admin', 'student', 'parent']), scheduleController.getStudentDashboardStats);
+
+router
+  .route('/stats/time-allocation')
+  .get(auth(['admin', 'student', 'parent']), scheduleController.getTimeAllocationBySubject);
+
+router
+  .route('/stats/completed-tasks')
+  .get(auth(['admin', 'student', 'parent']), scheduleController.getCompletedTasksBySubject);
+
+router
   .route('/:scheduleId/generate-meeting-link')
   .post(auth(['admin']), validate(scheduleValidation.generateMeetingLink), scheduleController.generateMeetingLink);
 
@@ -37,21 +53,12 @@ router
   .patch(auth(['admin']), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
   .delete(auth(['admin']), validate(scheduleValidation.deleteSchedule), scheduleController.deleteSchedule);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Schedules
- *   description: Schedule management and statistics
- */
-
 /**
  * @swagger
  * /schedules:
  *   post:
- *     summary: Create a schedule
- *     description: Only admins can create schedules. If meetingURL is not provided, a Jitsi Meet link will be auto-generated.
+ *     summary: Create a new schedule
+ *     description: Only admins can create schedules
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -71,60 +78,77 @@ module.exports = router;
  *               startTime:
  *                 type: string
  *                 format: date-time
- *                 description: Schedule start time
+ *                 example: "2024-01-15T10:00:00.000Z"
  *               duration:
- *                 type: number
+ *                 type: integer
+ *                 minimum: 1
  *                 description: Duration in minutes
+ *                 example: 60
  *               subjectCode:
  *                 type: string
- *                 description: Subject code
+ *                 example: "MATH101"
  *               studentId:
  *                 type: string
- *                 description: Student user ID
+ *                 description: User ID of the student
+ *                 example: "507f1f77bcf86cd799439011"
  *               tutorId:
  *                 type: string
- *                 description: Tutor user ID
+ *                 description: User ID of the tutor
+ *                 example: "507f1f77bcf86cd799439012"
  *               meetingURL:
  *                 type: string
- *                 description: Meeting URL (auto-generated Jitsi link if not provided)
+ *                 format: uri
+ *                 example: "https://meet.example.com/room123"
  *               note:
  *                 type: string
- *                 description: Additional notes
+ *                 example: "Review chapter 5"
  *               status:
  *                 type: string
  *                 enum: [upcoming, ongoing, completed, cancelled]
- *                 description: Schedule status
- *             example:
- *               startTime: '2024-11-22T14:00:00.000Z'
- *               duration: 60
- *               subjectCode: 'MATH101'
- *               studentId: '5ebac534954b54139806c112'
- *               tutorId: '5ebac534954b54139806c114'
- *               note: 'Ôn tập giải hệ phương trình'
+ *                 default: upcoming
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Schedule'
- *             example:
- *               id: '507f1f77bcf86cd799439040'
- *               startTime: '2024-11-22T14:00:00.000Z'
- *               duration: 60
- *               subjectCode: 'MATH101'
- *               studentId: '5ebac534954b54139806c112'
- *               tutorId: '5ebac534954b54139806c114'
- *               meetingURL: 'https://meet.jit.si/skillar-lesson-1700662800000-a1b2c3d4'
- *               status: 'upcoming'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 startTime:
+ *                   type: string
+ *                   format: date-time
+ *                 duration:
+ *                   type: integer
+ *                 subjectCode:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 tutorId:
+ *                   type: string
+ *                 meetingURL:
+ *                   type: string
+ *                 note:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *
  *   get:
  *     summary: Get all schedules
- *     description: Retrieve all schedules with pagination and filtering.
+ *     description: Logged in users can retrieve all schedules
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -145,23 +169,27 @@ module.exports = router;
  *           type: string
  *         description: Filter by subject code
  *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [upcoming, ongoing, completed, cancelled]
+ *         description: Filter by status
+ *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
- *         description: sort by query in the form of field:desc/asc (ex. startTime:desc)
+ *         description: Sort by field (e.g., startTime:desc)
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
- *         description: Maximum number of schedules
+ *         description: Maximum number of results
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *           default: 1
  *         description: Page number
  *     responses:
  *       "200":
@@ -174,31 +202,51 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Schedule'
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       startTime:
+ *                         type: string
+ *                         format: date-time
+ *                       duration:
+ *                         type: integer
+ *                       subjectCode:
+ *                         type: string
+ *                       studentId:
+ *                         type: string
+ *                       tutorId:
+ *                         type: string
+ *                       meetingURL:
+ *                         type: string
+ *                       note:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *                 page:
  *                   type: integer
- *                   example: 1
  *                 limit:
  *                   type: integer
- *                   example: 10
  *                 totalPages:
  *                   type: integer
- *                   example: 1
  *                 totalResults:
  *                   type: integer
- *                   example: 1
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  */
 
 /**
  * @swagger
  * /schedules/stats/today:
  *   get:
- *     summary: Get today's schedule count
- *     description: Get the count of schedules for today.
+ *     summary: Get today's schedules count
+ *     description: Only admins can access this statistic
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -208,11 +256,14 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TodayScheduleCount'
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
@@ -220,7 +271,7 @@ module.exports = router;
  * /schedules/stats/dashboard:
  *   get:
  *     summary: Get dashboard statistics
- *     description: Get comprehensive statistics for the dashboard including total schedules, today's schedules, and user counts.
+ *     description: Only admins can access dashboard statistics
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -230,11 +281,20 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/DashboardStats'
+ *               type: object
+ *               properties:
+ *                 totalSchedules:
+ *                   type: integer
+ *                 totalStudents:
+ *                   type: integer
+ *                 totalTutors:
+ *                   type: integer
+ *                 studentsParticipated:
+ *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
@@ -242,7 +302,7 @@ module.exports = router;
  * /schedules/stats/students-per-week:
  *   get:
  *     summary: Get students per week statistics
- *     description: Get the number of unique students with schedules per week.
+ *     description: Only admins can access this statistic
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -251,20 +311,33 @@ module.exports = router;
  *         name: weeks
  *         schema:
  *           type: integer
- *           minimum: 1
- *         default: 4
- *         description: Number of weeks to retrieve data for
+ *           default: 4
+ *         description: Number of weeks to analyze
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/StudentsPerWeekData'
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   week:
+ *                     type: string
+ *                     example: "2024-01"
+ *                   weekStart:
+ *                     type: string
+ *                     format: date-time
+ *                   weekEnd:
+ *                     type: string
+ *                     format: date-time
+ *                   studentCount:
+ *                     type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  */
 
 /**
@@ -272,7 +345,7 @@ module.exports = router;
  * /schedules/stats/schedules-per-month:
  *   get:
  *     summary: Get schedules per month statistics
- *     description: Get the number of schedules per month.
+ *     description: Only admins can access this statistic
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -281,28 +354,215 @@ module.exports = router;
  *         name: months
  *         schema:
  *           type: integer
- *           minimum: 1
- *         default: 6
- *         description: Number of months to retrieve data for
+ *           default: 6
+ *         description: Number of months to analyze
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/SchedulesPerMonthData'
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   month:
+ *                     type: string
+ *                     example: "2024-01"
+ *                   monthStart:
+ *                     type: string
+ *                     format: date-time
+ *                   monthEnd:
+ *                     type: string
+ *                     format: date-time
+ *                   scheduleCount:
+ *                     type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       \"403\":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/today-lessons:
+ *   get:
+ *     summary: Get today's lesson statistics
+ *     description: Logged in users can access today's lesson statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 todayCompletion:
+ *                   type: object
+ *                   properties:
+ *                     completed:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     percentage:
+ *                       type: integer
+ *                 todaySchedules:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       startTime:
+ *                         type: string
+ *                         format: date-time
+ *                       duration:
+ *                         type: integer
+ *                       subjectCode:
+ *                         type: string
+ *                       studentId:
+ *                         type: object
+ *                       tutorId:
+ *                         type: object
+ *                       meetingURL:
+ *                         type: string
+ *                       note:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                 thisWeek:
+ *                   type: object
+ *                   properties:
+ *                     totalSessions:
+ *                       type: integer
+ *                     totalHours:
+ *                       type: number
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/student-dashboard:
+ *   get:
+ *     summary: Get student dashboard statistics
+ *     description: Students, parents, and admins can access student dashboard statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 todayTasks:
+ *                   type: object
+ *                   properties:
+ *                     completed:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     percentage:
+ *                       type: integer
+ *                 upcomingSessions:
+ *                   type: integer
+ *                 activeSubjects:
+ *                   type: integer
+ *                 nextLessonHours:
+ *                   type: number
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/time-allocation:
+ *   get:
+ *     summary: Get time allocation by subject
+ *     description: Students, parents, and admins can access time allocation statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       subjectCode:
+ *                         type: string
+ *                       hours:
+ *                         type: number
+ *                       percentage:
+ *                         type: integer
+ *                 totalHours:
+ *                   type: number
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/completed-tasks:
+ *   get:
+ *     summary: Get completed tasks by subject
+ *     description: Students, parents, and admins can access completed tasks statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       subject:
+ *                         type: string
+ *                       completed:
+ *                         type: integer
+ *                       total:
+ *                         type: integer
+ *                       percentage:
+ *                         type: integer
+ *                 overall:
+ *                   type: object
+ *                   properties:
+ *                     completed:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     percentage:
+ *                       type: integer
+ *       "401":
+ *         description: Unauthorized
  */
 
 /**
  * @swagger
  * /schedules/{scheduleId}/generate-meeting-link:
  *   post:
- *     summary: Generate meeting link for schedule
- *     description: Generate or regenerate a Jitsi meeting URL for an existing schedule. Only admins can perform this action.
+ *     summary: Generate meeting link for a schedule
+ *     description: Only admins can generate meeting links
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
@@ -319,69 +579,87 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Schedule'
- *             example:
- *               id: '507f1f77bcf86cd799439040'
- *               startTime: '2024-11-22T14:00:00.000Z'
- *               duration: 60
- *               subjectCode: 'MATH101'
- *               studentId: '5ebac534954b54139806c112'
- *               tutorId: '5ebac534954b54139806c114'
- *               meetingURL: 'https://meet.jit.si/skillar-lesson-39040-a1b2c3d4'
- *               status: 'upcoming'
- *               createdAt: '2024-11-20T10:00:00.000Z'
- *               updatedAt: '2024-11-22T12:00:00.000Z'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 meetingURL:
+ *                   type: string
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
 /**
  * @swagger
- * /schedules/{id}:
+ * /schedules/{scheduleId}:
  *   get:
  *     summary: Get a schedule
- *     description: Get detailed information about a specific schedule.
+ *     description: Logged in users can fetch schedule information
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: scheduleId
  *         required: true
  *         schema:
  *           type: string
- *         description: Schedule id
+ *         description: Schedule ID
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Schedule'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 startTime:
+ *                   type: string
+ *                   format: date-time
+ *                 duration:
+ *                   type: integer
+ *                 subjectCode:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 tutorId:
+ *                   type: string
+ *                 meetingURL:
+ *                   type: string
+ *                 note:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
  *     summary: Update a schedule
- *     description: Only admins can update schedules.
+ *     description: Only admins can update schedules
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: scheduleId
  *         required: true
  *         schema:
  *           type: string
- *         description: Schedule id
+ *         description: Schedule ID
  *     requestBody:
  *       required: true
  *       content:
@@ -393,51 +671,86 @@ module.exports = router;
  *                 type: string
  *                 format: date-time
  *               duration:
- *                 type: number
+ *                 type: integer
+ *                 minimum: 1
  *               subjectCode:
  *                 type: string
  *               studentId:
  *                 type: string
  *               tutorId:
  *                 type: string
- *             example:
- *               startTime: '2024-11-22T15:00:00.000Z'
- *               duration: 90
+ *               meetingURL:
+ *                 type: string
+ *                 format: uri
+ *               note:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [upcoming, ongoing, completed, cancelled]
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Schedule'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 startTime:
+ *                   type: string
+ *                   format: date-time
+ *                 duration:
+ *                   type: integer
+ *                 subjectCode:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 tutorId:
+ *                   type: string
+ *                 meetingURL:
+ *                   type: string
+ *                 note:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
  *     summary: Delete a schedule
- *     description: Only admins can delete schedules.
+ *     description: Only admins can delete schedules
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: scheduleId
  *         required: true
  *         schema:
  *           type: string
- *         description: Schedule id
+ *         description: Schedule ID
  *     responses:
- *       "200":
- *         description: No content
+ *       "204":
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
+module.exports = router;

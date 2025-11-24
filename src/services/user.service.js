@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { USER_ROLES } = require('../constants');
 
 /**
  * Create a user
@@ -34,7 +35,11 @@ const queryUsers = async (filter, options) => {
  * @returns {Promise<User>}
  */
 const getUserById = async (id) => {
-  return User.findById(id);
+  const user = await User.findById(id);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  return user;
 };
 
 /**
@@ -53,15 +58,19 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<User>}
  */
 const updateUserById = async (userId, updateBody) => {
-  const user = await getUserById(userId);
-  if (!user) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  Object.assign(user, updateBody);
-  await user.save();
+  
+  const user = await User.findByIdAndUpdate(userId, updateBody, {
+    new: true,
+    runValidators: true,
+  });
+  
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  
   return user;
 };
 
@@ -71,11 +80,10 @@ const updateUserById = async (userId, updateBody) => {
  * @returns {Promise<User>}
  */
 const deleteUserById = async (userId) => {
-  const user = await getUserById(userId);
+  const user = await User.findByIdAndDelete(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  await user.remove();
   return user;
 };
 
@@ -92,7 +100,7 @@ const countUsers = async () => {
  * @returns {Promise<Object>}
  */
 const countUsersByRole = async () => {
-  const roles = ['student', 'parent', 'tutor', 'admin'];
+  const roles = Object.values(USER_ROLES);
   const counts = {};
 
   await Promise.all(

@@ -13,21 +13,12 @@ router
   .patch(auth(['admin', 'tutor']), validate(tutorInfoValidation.updateTutorInfo), tutorInfoController.updateTutorInfo)
   .delete(auth(['admin']), validate(tutorInfoValidation.deleteTutorInfo), tutorInfoController.deleteTutorInfo);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: TutorInfo
- *   description: Tutor extended information management
- */
-
 /**
  * @swagger
  * /tutors/{userId}/info:
  *   post:
- *     summary: Create tutor info
- *     description: Only admins can create tutor extended information.
+ *     summary: Create tutor information
+ *     description: Only admins can create tutor information
  *     tags: [TutorInfo]
  *     security:
  *       - bearerAuth: []
@@ -37,9 +28,9 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the tutor
  *     requestBody:
- *       required: false
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -49,61 +40,82 @@ module.exports = router;
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Subjects taught
+ *                 example: ["Mathematics", "Physics"]
  *               experience:
  *                 type: string
- *                 description: Teaching experience
+ *                 example: "5 years of teaching experience"
  *               qualification:
  *                 type: string
- *                 description: Educational qualifications
+ *                 example: "Master's in Mathematics"
  *               specialties:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Special areas of expertise
+ *                 example: ["Calculus", "Algebra"]
  *               bio:
  *                 type: string
- *                 description: Biography
+ *                 example: "Experienced tutor specializing in mathematics"
  *               cvUrl:
  *                 type: string
- *                 description: CV/Resume URL
+ *                 format: uri
+ *                 example: "https://example.com/cv.pdf"
  *               rating:
  *                 type: number
  *                 minimum: 0
  *                 maximum: 5
- *                 description: Average rating
+ *                 example: 4.5
  *               totalStudents:
  *                 type: integer
  *                 minimum: 0
- *                 description: Total students taught
- *             example:
- *               subjects: ["Toán", "Vật lý"]
- *               experience: "5 năm giảng dạy THCS & THPT"
- *               qualification: "Cử nhân Sư phạm Toán"
- *               specialties: ["Toán nâng cao", "Luyện thi chuyên"]
- *               bio: "Đam mê giảng dạy"
- *               cvUrl: "https://example.com/cv.pdf"
- *               rating: 4.8
- *               totalStudents: 45
+ *                 example: 50
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TutorInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 experience:
+ *                   type: string
+ *                 qualification:
+ *                   type: string
+ *                 specialties:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 bio:
+ *                   type: string
+ *                 cvUrl:
+ *                   type: string
+ *                 rating:
+ *                   type: number
+ *                 totalStudents:
+ *                   type: integer
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Forbidden
  *
  *   get:
- *     summary: Get tutor info
- *     description: Admin, student, and tutor can retrieve tutor information.
+ *     summary: Get tutor information
+ *     description: Students, tutors, and admins can retrieve tutor information
  *     tags: [TutorInfo]
  *     security:
  *       - bearerAuth: []
@@ -113,24 +125,53 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the tutor
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TutorInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 experience:
+ *                   type: string
+ *                 qualification:
+ *                   type: string
+ *                 specialties:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 bio:
+ *                   type: string
+ *                 cvUrl:
+ *                   type: string
+ *                 rating:
+ *                   type: number
+ *                 totalStudents:
+ *                   type: integer
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
- *     summary: Update tutor info
- *     description: Admins and tutors can update tutor information.
+ *     summary: Update tutor information
+ *     description: Admins and tutors can update tutor information
  *     tags: [TutorInfo]
  *     security:
  *       - bearerAuth: []
@@ -140,7 +181,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the tutor
  *     requestBody:
  *       required: true
  *       content:
@@ -164,6 +205,7 @@ module.exports = router;
  *                 type: string
  *               cvUrl:
  *                 type: string
+ *                 format: uri
  *               rating:
  *                 type: number
  *                 minimum: 0
@@ -171,28 +213,56 @@ module.exports = router;
  *               totalStudents:
  *                 type: integer
  *                 minimum: 0
- *             example:
- *               experience: "6 năm giảng dạy"
- *               rating: 4.9
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/TutorInfo'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 userId:
+ *                   type: string
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 experience:
+ *                   type: string
+ *                 qualification:
+ *                   type: string
+ *                 specialties:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 bio:
+ *                   type: string
+ *                 cvUrl:
+ *                   type: string
+ *                 rating:
+ *                   type: number
+ *                 totalStudents:
+ *                   type: integer
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
- *     summary: Delete tutor info
- *     description: Only admins can delete tutor information.
+ *     summary: Delete tutor information
+ *     description: Only admins can delete tutor information
  *     tags: [TutorInfo]
  *     security:
  *       - bearerAuth: []
@@ -202,82 +272,17 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: User ID
+ *         description: User ID of the tutor
  *     responses:
  *       "204":
- *         description: No content
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     TutorInfo:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         userId:
- *           type: object
- *           properties:
- *             id:
- *               type: string
- *             name:
- *               type: string
- *             email:
- *               type: string
- *             role:
- *               type: string
- *             phone:
- *               type: string
- *             avatarUrl:
- *               type: string
- *             address:
- *               type: string
- *         subjects:
- *           type: array
- *           items:
- *             type: string
- *         experience:
- *           type: string
- *         qualification:
- *           type: string
- *         specialties:
- *           type: array
- *           items:
- *             type: string
- *         bio:
- *           type: string
- *         cvUrl:
- *           type: string
- *         rating:
- *           type: number
- *         totalStudents:
- *           type: integer
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: "507f1f77bcf86cd799439021"
- *         userId:
- *           id: "507f1f77bcf86cd799439012"
- *           name: "Nguyễn Thị B"
- *           email: "tutor@skillar.com"
- *           role: "tutor"
- *         subjects: ["Toán", "Vật lý"]
- *         experience: "5 năm giảng dạy"
- *         qualification: "Cử nhân Sư phạm Toán"
- *         specialties: ["Toán nâng cao"]
- *         bio: "Đam mê giảng dạy"
- *         rating: 4.8
- *         totalStudents: 45
- */
+module.exports = router;
+

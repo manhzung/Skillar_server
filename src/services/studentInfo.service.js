@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { StudentInfo, User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { USER_ROLES, USER_DETAILED_SELECT_FIELDS } = require('../constants');
 
 /**
  * Create student info
@@ -14,7 +15,7 @@ const createStudentInfo = async (userId, studentInfoBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  if (user.role !== 'student') {
+  if (user.role !== USER_ROLES.STUDENT) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User is not a student');
   }
 
@@ -39,7 +40,12 @@ const createStudentInfo = async (userId, studentInfoBody) => {
  */
 const getStudentInfoByUserId = async (userId) => {
   const studentInfo = await StudentInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address currentLevel');
+    .populate('userId', USER_DETAILED_SELECT_FIELDS);
+  
+  if (!studentInfo) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Student info not found');
+  }
+  
   return studentInfo;
 };
 
@@ -50,16 +56,17 @@ const getStudentInfoByUserId = async (userId) => {
  * @returns {Promise<StudentInfo>}
  */
 const updateStudentInfoByUserId = async (userId, updateBody) => {
-  const studentInfo = await getStudentInfoByUserId(userId);
+  const studentInfo = await StudentInfo.findOneAndUpdate({ userId }, updateBody, {
+    new: true,
+    runValidators: true,
+  })
+    .populate('userId', USER_DETAILED_SELECT_FIELDS);
+  
   if (!studentInfo) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Student info not found');
   }
-
-  Object.assign(studentInfo, updateBody);
-  await studentInfo.save();
   
-  return StudentInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address currentLevel');
+  return studentInfo;
 };
 
 /**
@@ -68,11 +75,10 @@ const updateStudentInfoByUserId = async (userId, updateBody) => {
  * @returns {Promise<StudentInfo>}
  */
 const deleteStudentInfoByUserId = async (userId) => {
-  const studentInfo = await getStudentInfoByUserId(userId);
+  const studentInfo = await StudentInfo.findOneAndDelete({ userId });
   if (!studentInfo) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Student info not found');
   }
-  await studentInfo.remove();
   return studentInfo;
 };
 

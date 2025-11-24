@@ -17,21 +17,12 @@ router
   .patch(auth(['tutor','admin']), validate(reviewValidation.updateReview), reviewController.updateReview)
   .delete(auth(['admin']), validate(reviewValidation.deleteReview), reviewController.deleteReview);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Reviews
- *   description: Daily review and student evaluation management
- */
-
 /**
  * @swagger
  * /reviews:
  *   post:
- *     summary: Create a review
- *     description: Tutors can create daily reviews for students.
+ *     summary: Create a new review
+ *     description: Only tutors and admins can create reviews
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -46,10 +37,11 @@ module.exports = router;
  *             properties:
  *               scheduleId:
  *                 type: string
- *                 description: Schedule ID reference
+ *                 description: Schedule ID
+ *                 example: "507f1f77bcf86cd799439011"
  *               overallRating:
  *                 type: string
- *                 description: Overall rating/summary
+ *                 example: "Good progress"
  *               reviews:
  *                 type: array
  *                 items:
@@ -60,13 +52,15 @@ module.exports = router;
  *                   properties:
  *                     name:
  *                       type: string
- *                       description: Criteria name (e.g., "Sự tập trung")
+ *                       example: "Understanding"
  *                     rating:
  *                       type: integer
  *                       minimum: 1
  *                       maximum: 5
+ *                       example: 4
  *                     comment:
  *                       type: string
+ *                       example: "Student shows good understanding"
  *               assignmentGrades:
  *                 type: array
  *                 items:
@@ -76,45 +70,68 @@ module.exports = router;
  *                   properties:
  *                     taskId:
  *                       type: string
+ *                       description: Task ID from assignment
+ *                       example: "507f1f77bcf86cd799439012"
  *                     result:
  *                       type: number
  *                       minimum: 0
  *                       maximum: 100
+ *                       example: 85
  *                     comment:
  *                       type: string
- *             example:
- *               scheduleId: "507f1f77bcf86cd799439040"
- *               overallRating: "Học sinh tiến bộ tốt"
- *               reviews:
- *                 - name: "Sự tập trung"
- *                   rating: 4
- *                   comment: "Tập trung tốt"
- *                 - name: "Hiểu bài"
- *                   rating: 4
- *                   comment: "Nắm vững kiến thức"
- *               assignmentGrades:
- *                 - taskId: "507f1f77bcf86cd799439051"
- *                   result: 85
- *                   comment: "Làm tốt"
+ *                       example: "Well done, minor mistakes"
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Review'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 overallRating:
+ *                   type: string
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       rating:
+ *                         type: integer
+ *                       comment:
+ *                         type: string
+ *                 assignmentGrades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       taskId:
+ *                         type: string
+ *                       result:
+ *                         type: number
+ *                       comment:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "400":
- *         $ref: '#/components/responses/BadRequest'
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Forbidden
  *
  *   get:
  *     summary: Get all reviews
- *     description: Admin, students, parents, and tutors can retrieve reviews.
+ *     description: Logged in users can retrieve all reviews
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -125,22 +142,32 @@ module.exports = router;
  *           type: string
  *         description: Filter by schedule ID
  *       - in: query
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         description: Filter by student ID
+ *       - in: query
+ *         name: tutorId
+ *         schema:
+ *           type: string
+ *         description: Filter by tutor ID
+ *       - in: query
  *         name: sortBy
  *         schema:
  *           type: string
- *         description: sort by query
+ *         description: Sort by field
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
+ *         description: Maximum number of results
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 1
+ *         description: Page number
  *     responses:
  *       "200":
  *         description: OK
@@ -152,7 +179,42 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Review'
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       scheduleId:
+ *                         type: string
+ *                       overallRating:
+ *                         type: string
+ *                       reviews:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
+ *                             rating:
+ *                               type: integer
+ *                             comment:
+ *                               type: string
+ *                       assignmentGrades:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             taskId:
+ *                               type: string
+ *                             result:
+ *                               type: number
+ *                             comment:
+ *                               type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *                 page:
  *                   type: integer
  *                 limit:
@@ -162,7 +224,7 @@ module.exports = router;
  *                 totalResults:
  *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  */
 
 /**
@@ -170,7 +232,7 @@ module.exports = router;
  * /reviews/{reviewId}:
  *   get:
  *     summary: Get a review
- *     description: Admin, students, parents, and tutors can fetch review details.
+ *     description: Logged in users can fetch review information
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -187,17 +249,50 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Review'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 overallRating:
+ *                   type: string
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       rating:
+ *                         type: integer
+ *                       comment:
+ *                         type: string
+ *                 assignmentGrades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       taskId:
+ *                         type: string
+ *                       result:
+ *                         type: number
+ *                       comment:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
  *     summary: Update a review
- *     description: Tutors can update their reviews.
+ *     description: Only tutors and admins can update reviews
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -207,6 +302,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
+ *         description: Review ID
  *     requestBody:
  *       required: true
  *       content:
@@ -242,25 +338,60 @@ module.exports = router;
  *                       maximum: 100
  *                     comment:
  *                       type: string
- *             example:
- *               overallRating: "Updated rating"
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Review'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 overallRating:
+ *                   type: string
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       rating:
+ *                         type: integer
+ *                       comment:
+ *                         type: string
+ *                 assignmentGrades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       taskId:
+ *                         type: string
+ *                       result:
+ *                         type: number
+ *                       comment:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
  *     summary: Delete a review
- *     description: Only admins can delete reviews.
+ *     description: Only admins can delete reviews
  *     tags: [Reviews]
  *     security:
  *       - bearerAuth: []
@@ -270,72 +401,17 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
+ *         description: Review ID
  *     responses:
  *       "204":
- *         description: No content
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Review:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         scheduleId:
- *           type: string
- *         overallRating:
- *           type: string
- *         reviews:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               rating:
- *                 type: integer
- *                 minimum: 1
- *                 maximum: 5
- *               comment:
- *                 type: string
- *         assignmentGrades:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               taskId:
- *                 type: string
- *               result:
- *                 type: number
- *                 minimum: 0
- *                 maximum: 100
- *               comment:
- *                 type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: "507f1f77bcf86cd799439070"
- *         scheduleId: "507f1f77bcf86cd799439040"
- *         overallRating: "Học sinh tiến bộ tốt"
- *         reviews:
- *           - name: "Sự tập trung"
- *             rating: 4
- *             comment: "Tập trung tốt"
- *         assignmentGrades:
- *           - taskId: "507f1f77bcf86cd799439051"
- *             result: 85
- *             comment: "Làm tốt"
- */
+module.exports = router;
+

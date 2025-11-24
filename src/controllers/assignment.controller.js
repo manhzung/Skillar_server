@@ -10,7 +10,7 @@ const createAssignment = catchAsync(async (req, res) => {
 });
 
 const getAssignments = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['scheduleId', 'subject', 'status']);
+  const filter = pick(req.query, ['scheduleId', 'studentId', 'tutorId', 'name', 'subject', 'status', 'startDate', 'endDate']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await assignmentService.queryAssignments(filter, options);
   res.send(result);
@@ -18,9 +18,6 @@ const getAssignments = catchAsync(async (req, res) => {
 
 const getAssignment = catchAsync(async (req, res) => {
   const assignment = await assignmentService.getAssignmentById(req.params.assignmentId);
-  if (!assignment) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
-  }
   res.send(assignment);
 });
 
@@ -43,6 +40,11 @@ const submitTask = catchAsync(async (req, res) => {
   res.send(assignment);
 });
 
+const getTodayAssignmentsStats = catchAsync(async (req, res) => {
+  const result = await assignmentService.getTodayAssignmentsStats();
+  res.send(result);
+});
+
 module.exports = {
   createAssignment,
   getAssignments,
@@ -50,4 +52,5 @@ module.exports = {
   updateAssignment,
   deleteAssignment,
   submitTask,
+  getTodayAssignmentsStats,
 };

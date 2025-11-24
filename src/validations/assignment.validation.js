@@ -26,8 +26,16 @@ const getAssignments = {
   query: Joi.object().keys({
     scheduleId: Joi.string().custom(objectId),
     studentId: Joi.string().custom(objectId),
+    tutorId: Joi.string().custom(objectId),
+    name: Joi.string(),
     subject: Joi.string(),
     status: Joi.string().valid('pending', 'in-progress', 'completed'),
+    startDate: Joi.date().iso(),
+    endDate: Joi.date().iso().when('startDate', {
+      is: Joi.exist(),
+      then: Joi.date().greater(Joi.ref('startDate')),
+      otherwise: Joi.date(),
+    }),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),

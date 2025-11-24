@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { TutorInfo, User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { USER_ROLES, USER_DETAILED_SELECT_FIELDS } = require('../constants');
 
 /**
  * Create tutor info
@@ -14,7 +15,7 @@ const createTutorInfo = async (userId, tutorInfoBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
-  if (user.role !== 'tutor') {
+  if (user.role !== USER_ROLES.TUTOR) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User is not a tutor');
   }
 
@@ -39,7 +40,12 @@ const createTutorInfo = async (userId, tutorInfoBody) => {
  */
 const getTutorInfoByUserId = async (userId) => {
   const tutorInfo = await TutorInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address');
+    .populate('userId', USER_DETAILED_SELECT_FIELDS);
+  
+  if (!tutorInfo) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Tutor info not found');
+  }
+  
   return tutorInfo;
 };
 
@@ -50,16 +56,17 @@ const getTutorInfoByUserId = async (userId) => {
  * @returns {Promise<TutorInfo>}
  */
 const updateTutorInfoByUserId = async (userId, updateBody) => {
-  const tutorInfo = await getTutorInfoByUserId(userId);
+  const tutorInfo = await TutorInfo.findOneAndUpdate({ userId }, updateBody, {
+    new: true,
+    runValidators: true,
+  })
+    .populate('userId', USER_DETAILED_SELECT_FIELDS);
+  
   if (!tutorInfo) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Tutor info not found');
   }
-
-  Object.assign(tutorInfo, updateBody);
-  await tutorInfo.save();
   
-  return TutorInfo.findOne({ userId })
-    .populate('userId', 'name email role phone avatarUrl address');
+  return tutorInfo;
 };
 
 /**
@@ -68,11 +75,10 @@ const updateTutorInfoByUserId = async (userId, updateBody) => {
  * @returns {Promise<TutorInfo>}
  */
 const deleteTutorInfoByUserId = async (userId) => {
-  const tutorInfo = await getTutorInfoByUserId(userId);
+  const tutorInfo = await TutorInfo.findOneAndDelete({ userId });
   if (!tutorInfo) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Tutor info not found');
   }
-  await tutorInfo.remove();
   return tutorInfo;
 };
 

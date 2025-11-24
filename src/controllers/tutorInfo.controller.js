@@ -11,9 +11,6 @@ const createTutorInfo = catchAsync(async (req, res) => {
 
 const getTutorInfo = catchAsync(async (req, res) => {
   const tutorInfo = await tutorInfoService.getTutorInfoByUserId(req.params.userId);
-  if (!tutorInfo) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Tutor info not found');
-  }
   res.send(tutorInfo);
 });
 

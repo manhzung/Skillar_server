@@ -11,9 +11,6 @@ const createStudentInfo = catchAsync(async (req, res) => {
 
 const getStudentInfo = catchAsync(async (req, res) => {
   const studentInfo = await studentInfoService.getStudentInfoByUserId(req.params.userId);
-  if (!studentInfo) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Student info not found');
-  }
   res.send(studentInfo);
 });
 

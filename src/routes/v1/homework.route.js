@@ -21,21 +21,12 @@ router
   .route('/:homeworkId/tasks/:taskId/submit')
   .patch(auth(['student','admin']), validate(homeworkValidation.submitTask), homeworkController.submitTask);
 
-module.exports = router;
-
-/**
- * @swagger
- * tags:
- *   name: Homeworks
- *   description: Homework management and submission
- */
-
 /**
  * @swagger
  * /homeworks:
  *   post:
- *     summary: Create homework
- *     description: Admin and tutors can create homework for students.
+ *     summary: Create a new homework
+ *     description: Only admins and tutors can create homeworks
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -53,20 +44,29 @@ module.exports = router;
  *             properties:
  *               studentId:
  *                 type: string
+ *                 description: User ID of the student
+ *                 example: "507f1f77bcf86cd799439011"
  *               scheduleId:
  *                 type: string
+ *                 description: Schedule ID
+ *                 example: "507f1f77bcf86cd799439012"
  *               name:
  *                 type: string
+ *                 example: "Math Homework 1"
  *               description:
  *                 type: string
+ *                 example: "Complete exercises 1-10"
  *               deadline:
  *                 type: string
  *                 format: date-time
+ *                 example: "2024-01-20T23:59:59.000Z"
  *               difficulty:
  *                 type: string
  *                 enum: [easy, medium, hard, advanced]
+ *                 example: medium
  *               subject:
  *                 type: string
+ *                 example: "Mathematics"
  *               tasks:
  *                 type: array
  *                 items:
@@ -76,43 +76,80 @@ module.exports = router;
  *                   properties:
  *                     name:
  *                       type: string
+ *                       example: "Task 1"
  *                     assignmentUrl:
  *                       type: string
+ *                       format: uri
+ *                       example: "https://example.com/assignment.pdf"
  *                     solutionUrl:
  *                       type: string
+ *                       format: uri
+ *                       example: "https://example.com/solution.pdf"
  *                     status:
  *                       type: string
  *                       enum: [pending, submitted, graded]
+ *                       default: pending
  *                     description:
  *                       type: string
- *             example:
- *               studentId: "507f1f77bcf86cd799439011"
- *               scheduleId: "507f1f77bcf86cd799439040"
- *               name: "Bài tập về nhà tuần 1"
- *               description: "Làm bài tập SGK"
- *               deadline: "2025-11-30T23:59:59.000Z"
- *               difficulty: "medium"
- *               subject: "Toán"
- *               tasks:
- *                 - name: "Làm lại bài 4"
- *                   assignmentUrl: "https://example.com/hw.pdf"
+ *                       example: "Solve quadratic equations"
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Homework'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 deadline:
+ *                   type: string
+ *                   format: date-time
+ *                 difficulty:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "403":
- *         $ref: '#/components/responses/Forbidden'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Forbidden
  *
  *   get:
  *     summary: Get all homeworks
- *     description: Admin, students, and tutors can retrieve homeworks.
+ *     description: Logged in users can retrieve all homeworks
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -133,6 +170,12 @@ module.exports = router;
  *           type: string
  *         description: Filter by subject
  *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [pending, submitted, graded]
+ *         description: Filter by task status
+ *       - in: query
  *         name: difficulty
  *         schema:
  *           type: string
@@ -142,19 +185,19 @@ module.exports = router;
  *         name: sortBy
  *         schema:
  *           type: string
- *         description: sort by query
+ *         description: Sort by field
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 10
+ *         description: Maximum number of results
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
  *           minimum: 1
- *         default: 1
+ *         description: Page number
  *     responses:
  *       "200":
  *         description: OK
@@ -166,7 +209,48 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Homework'
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       studentId:
+ *                         type: string
+ *                       scheduleId:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       deadline:
+ *                         type: string
+ *                         format: date-time
+ *                       difficulty:
+ *                         type: string
+ *                       subject:
+ *                         type: string
+ *                       tasks:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                             name:
+ *                               type: string
+ *                             assignmentUrl:
+ *                               type: string
+ *                             solutionUrl:
+ *                               type: string
+ *                             status:
+ *                               type: string
+ *                             description:
+ *                               type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *                 page:
  *                   type: integer
  *                 limit:
@@ -176,7 +260,7 @@ module.exports = router;
  *                 totalResults:
  *                   type: integer
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  */
 
 /**
@@ -184,7 +268,7 @@ module.exports = router;
  * /homeworks/{homeworkId}:
  *   get:
  *     summary: Get a homework
- *     description: Admin, students, and tutors can fetch homework details.
+ *     description: Logged in users can fetch homework information
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -201,15 +285,56 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Homework'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 deadline:
+ *                   type: string
+ *                   format: date-time
+ *                 difficulty:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   patch:
- *     summary: Update homework
- *     description: Admin and tutors can update homework (e.g., add teacher solution, grade).
+ *     summary: Update a homework
+ *     description: Only admins and tutors can update homeworks
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -219,6 +344,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
+ *         description: Homework ID
  *     requestBody:
  *       required: true
  *       content:
@@ -242,23 +368,80 @@ module.exports = router;
  *                 type: array
  *                 items:
  *                   type: object
- *             example:
- *               difficulty: "hard"
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     assignmentUrl:
+ *                       type: string
+ *                       format: uri
+ *                     solutionUrl:
+ *                       type: string
+ *                       format: uri
+ *                     status:
+ *                       type: string
+ *                       enum: [pending, submitted, graded]
+ *                     description:
+ *                       type: string
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Homework'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 deadline:
+ *                   type: string
+ *                   format: date-time
+ *                 difficulty:
+ *                   type: string
+ *                 subject:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  *
  *   delete:
- *     summary: Delete homework
- *     description: Only admins can delete homework.
+ *     summary: Delete a homework
+ *     description: Only admins can delete homeworks
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -268,21 +451,24 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
+ *         description: Homework ID
  *     responses:
  *       "204":
- *         description: No content
+ *         description: No Content
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
 /**
  * @swagger
  * /homeworks/{homeworkId}/tasks/{taskId}/submit:
  *   patch:
- *     summary: Submit homework task
- *     description: Students can submit their homework task solutions.
+ *     summary: Submit a homework task
+ *     description: Students and admins can submit homework tasks
  *     tags: [Homeworks]
  *     security:
  *       - bearerAuth: []
@@ -292,11 +478,13 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
+ *         description: Homework ID
  *       - in: path
  *         name: taskId
  *         required: true
  *         schema:
  *           type: string
+ *         description: Task ID
  *     requestBody:
  *       required: true
  *       content:
@@ -306,81 +494,57 @@ module.exports = router;
  *             properties:
  *               solutionUrl:
  *                 type: string
+ *                 format: uri
+ *                 example: "https://example.com/solution.pdf"
  *               status:
  *                 type: string
  *                 enum: [submitted]
+ *                 example: submitted
  *               description:
  *                 type: string
- *             example:
- *               solutionUrl: "https://example.com/my-homework.pdf"
- *               status: "submitted"
+ *                 example: "Completed the task"
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Homework'
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 scheduleId:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       assignmentUrl:
+ *                         type: string
+ *                       solutionUrl:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       "400":
+ *         description: Bad Request
  *       "401":
- *         $ref: '#/components/responses/Unauthorized'
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
  *       "404":
- *         $ref: '#/components/responses/NotFound'
+ *         description: Not Found
  */
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Homework:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         studentId:
- *           type: string
- *         scheduleId:
- *           type: string
- *         name:
- *           type: string
- *         description:
- *           type: string
- *         deadline:
- *           type: string
- *           format: date-time
- *         difficulty:
- *           type: string
- *           enum: [easy, medium, hard, advanced]
- *         subject:
- *           type: string
- *         tasks:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *               name:
- *                 type: string
- *               assignmentUrl:
- *                 type: string
- *               solutionUrl:
- *                 type: string
- *               status:
- *                 type: string
- *               description:
- *                 type: string
- *         createdAt:
- *           type: string
- *           format: date-time
- *         updatedAt:
- *           type: string
- *           format: date-time
- *       example:
- *         id: "507f1f77bcf86cd799439060"
- *         studentId: "507f1f77bcf86cd799439011"
- *         scheduleId: "507f1f77bcf86cd799439040"
- *         name: "Bài tập về nhà tuần 1"
- *         deadline: "2025-11-30T23:59:59.000Z"
- *         difficulty: "medium"
- *         subject: "Toán"
- */
+module.exports = router;
+
