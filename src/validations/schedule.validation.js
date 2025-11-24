@@ -8,6 +8,9 @@ const createSchedule = {
         subjectCode: Joi.string().required(),
         studentId: Joi.string().required().custom(objectId),
         tutorId: Joi.string().required().custom(objectId),
+        meetingURL: Joi.string().uri(),
+        note: Joi.string(),
+        status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
     }),
 };
 
@@ -16,6 +19,7 @@ const getSchedules = {
         studentId: Joi.string().custom(objectId),
         tutorId: Joi.string().custom(objectId),
         subjectCode: Joi.string(),
+        status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
         sortBy: Joi.string(),
         limit: Joi.number().integer(),
         page: Joi.number().integer(),
@@ -39,6 +43,9 @@ const updateSchedule = {
             subjectCode: Joi.string(),
             studentId: Joi.string().custom(objectId),
             tutorId: Joi.string().custom(objectId),
+            meetingURL: Joi.string().uri(),
+            note: Joi.string(),
+            status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
         })
         .min(1),
 };

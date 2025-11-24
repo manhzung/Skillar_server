@@ -10,6 +10,9 @@ const createUser = {
     phone: Joi.string(),
     birthday: Joi.date(),
     moreInfo: Joi.string(),
+    avatarUrl: Joi.string().uri(),
+    address: Joi.string(),
+    currentLevel: Joi.string(),
   }),
 };
 
@@ -41,6 +44,9 @@ const updateUser = {
       phone: Joi.string(),
       birthday: Joi.date(),
       moreInfo: Joi.string(),
+      avatarUrl: Joi.string().uri(),
+      address: Joi.string(),
+      currentLevel: Joi.string(),
     })
     .min(1),
 };

@@ -25,6 +25,7 @@ const createAssignment = {
 const getAssignments = {
   query: Joi.object().keys({
     scheduleId: Joi.string().custom(objectId),
+    studentId: Joi.string().custom(objectId),
     subject: Joi.string(),
     status: Joi.string().valid('pending', 'in-progress', 'completed'),
     sortBy: Joi.string(),
@@ -68,7 +69,7 @@ const submitTask = {
   body: Joi.object().keys({
     actualTime: Joi.number().integer().min(0),
     solutionUrl: Joi.string(),
-    status: Joi.string().valid('submitted', 'graded'),
+    status: Joi.string().valid('submitted'),
     description: Joi.string(),
   }),
 };

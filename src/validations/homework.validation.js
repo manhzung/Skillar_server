@@ -27,6 +27,7 @@ const getHomeworks = {
     studentId: Joi.string().custom(objectId),
     scheduleId: Joi.string().custom(objectId),
     subject: Joi.string(),
+    status: Joi.string().valid('pending', 'submitted', 'graded'),
     difficulty: Joi.string().valid('easy', 'medium', 'hard', 'advanced'),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),

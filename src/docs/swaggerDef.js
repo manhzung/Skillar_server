@@ -11,6 +11,10 @@ const swaggerDef = {
       name: 'MIT',
       url: 'https://github.com/hagopj13/node-express-boilerplate/blob/master/LICENSE',
     },
+    contact: {
+      name: 'Skillar Support',
+      email: 'support@skillar.com',
+    },
   },
   servers: [
     {
@@ -24,6 +28,21 @@ const swaggerDef = {
     {
       url: `http://localhost:${config.port}/v1`,
       description: 'Development server (Local)',
+    },
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter your JWT token (without "Bearer" prefix)',
+      },
+    },
+  },
+  security: [
+    {
+      bearerAuth: [],
     },
   ],
 };

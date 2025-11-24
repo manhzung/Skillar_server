@@ -25,6 +25,8 @@ const createReview = {
 const getReviews = {
   query: Joi.object().keys({
     scheduleId: Joi.string().custom(objectId),
+    studentId: Joi.string().custom(objectId),
+    tutorId: Joi.string().custom(objectId),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),

@@ -24,6 +24,18 @@ components:
           type: boolean
         isActive:
           type: boolean
+        avatarUrl:
+          type: string
+        address:
+          type: string
+        currentLevel:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
       example:
         id: 5ebac534954b54139806c112
         email: student@example.com
@@ -33,6 +45,9 @@ components:
         birthday: '2005-01-15'
         isEmailVerified: true
         isActive: true
+        avatarUrl: 'https://example.com/avatar.jpg'
+        address: '123 Main St, Hanoi'
+        currentLevel: 'Grade 10'
 
     Schedule:
       type: object
@@ -51,6 +66,13 @@ components:
           type: string
         tutorId:
           type: string
+        meetingURL:
+          type: string
+        note:
+          type: string
+        status:
+          type: string
+          enum: [upcoming, ongoing, completed, cancelled]
         createdAt:
           type: string
           format: date-time
@@ -64,6 +86,384 @@ components:
         subjectCode: 'MATH101'
         studentId: '5ebac534954b54139806c112'
         tutorId: '5ebac534954b54139806c114'
+        meetingURL: 'https://meet.jit.si/skillar-math-abc123'
+        note: 'Review chapter 2'
+        status: 'upcoming'
+
+    AssignmentDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        estimatedTime:
+          type: number
+          description: In minutes
+        actualTime:
+          type: number
+          description: In minutes
+        assignmentUrl:
+          type: string
+        solutionUrl:
+          type: string
+        status:
+          type: string
+          enum: [pending, in-progress, completed, submitted, graded]
+        description:
+          type: string
+      example:
+        id: '507f1f77bcf86cd799439051'
+        name: 'Bài 3'
+        estimatedTime: 10
+        actualTime: 12
+        assignmentUrl: 'https://example.com/assignment.pdf'
+        solutionUrl: 'https://example.com/solution.pdf'
+        status: 'completed'
+        description: 'Solve equations'
+
+    Assignment:
+      type: object
+      properties:
+        id:
+          type: string
+        scheduleId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        subject:
+          type: string
+        status:
+          type: string
+          enum: [pending, in-progress, completed]
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignmentDetail'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd799439050'
+        scheduleId: '507f1f77bcf86cd799439040'
+        name: 'Bài tập buổi 1'
+        description: 'Complete all exercises in chapter 2'
+        subject: 'Toán'
+        status: 'in-progress'
+        tasks:
+          - id: '507f1f77bcf86cd799439051'
+            name: 'Bài 3'
+            estimatedTime: 10
+            actualTime: 12
+            status: 'completed'
+
+    HomeworkDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        assignmentUrl:
+          type: string
+        solutionUrl:
+          type: string
+        status:
+          type: string
+          enum: [pending, submitted, graded]
+        description:
+          type: string
+      example:
+        id: '507f1f77bcf86cd799439061'
+        name: 'Exercise 1'
+        assignmentUrl: 'https://example.com/hw.pdf'
+        solutionUrl: 'https://example.com/solution.pdf'
+        status: 'submitted'
+        description: 'Complete homework exercises'
+
+    Homework:
+      type: object
+      properties:
+        id:
+          type: string
+        studentId:
+          type: string
+        scheduleId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        difficulty:
+          type: string
+          enum: [easy, medium, hard, advanced]
+        subject:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/HomeworkDetail'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd799439060'
+        studentId: '507f1f77bcf86cd799439011'
+        scheduleId: '507f1f77bcf86cd799439040'
+        name: 'Bài tập về nhà tuần 1'
+        description: 'Complete all homework tasks'
+        deadline: '2025-11-30T23:59:59.000Z'
+        difficulty: 'medium'
+        subject: 'Toán'
+        tasks:
+          - id: '507f1f77bcf86cd799439061'
+            name: 'Exercise 1'
+            status: 'pending'
+
+    ReviewItem:
+      type: object
+      properties:
+        name:
+          type: string
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+      example:
+        name: 'Concentration'
+        rating: 4
+        comment: 'Good focus during lesson'
+
+    AssignmentGrade:
+      type: object
+      properties:
+        taskId:
+          type: string
+        result:
+          type: number
+          minimum: 0
+          maximum: 100
+        comment:
+          type: string
+      example:
+        taskId: '507f1f77bcf86cd799439051'
+        result: 85
+        comment: 'Well done'
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+        scheduleId:
+          type: string
+        overallRating:
+          type: string
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewItem'
+        assignmentGrades:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignmentGrade'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd799439070'
+        scheduleId: '507f1f77bcf86cd799439040'
+        overallRating: 'Excellent progress'
+        reviews:
+          - name: 'Concentration'
+            rating: 4
+            comment: 'Good focus'
+          - name: 'Understanding'
+            rating: 5
+            comment: 'Excellent grasp'
+        assignmentGrades:
+          - taskId: '507f1f77bcf86cd799439051'
+            result: 85
+            comment: 'Well done'
+
+    HomeworkReview:
+      type: object
+      properties:
+        id:
+          type: string
+        homeworkId:
+          type: string
+        overallRating:
+          type: number
+          minimum: 1
+          maximum: 5
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewItem'
+        assignmentGrades:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignmentGrade'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd799439080'
+        homeworkId: '507f1f77bcf86cd799439060'
+        overallRating: 4
+        reviews:
+          - name: 'Completion'
+            rating: 4
+            comment: 'All tasks completed'
+
+    StudentInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        school:
+          type: string
+        grade:
+          type: string
+        parentId:
+          type: string
+        parentRequest:
+          type: string
+        hobbies:
+          type: array
+          items:
+            type: string
+        favoriteSubjects:
+          type: array
+          items:
+            type: string
+        strengths:
+          type: array
+          items:
+            type: string
+        improvements:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd799439090'
+        userId: '5ebac534954b54139806c112'
+        school: 'Hanoi High School'
+        grade: 'Grade 10'
+        parentId: '5ebac534954b54139806c115'
+        parentRequest: 'Focus on math improvement'
+        hobbies: ['Reading', 'Soccer']
+        favoriteSubjects: ['Math', 'Physics']
+        strengths: ['Logical thinking', 'Problem solving']
+        improvements: ['Time management', 'Essay writing']
+        notes: 'Very motivated student'
+
+    TutorInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        subjects:
+          type: array
+          items:
+            type: string
+        experience:
+          type: string
+        qualification:
+          type: string
+        specialties:
+          type: array
+          items:
+            type: string
+        bio:
+          type: string
+        cvUrl:
+          type: string
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        totalStudents:
+          type: number
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd7994390A0'
+        userId: '5ebac534954b54139806c114'
+        subjects: ['Math', 'Physics']
+        experience: '5 years teaching high school'
+        qualification: 'MSc in Mathematics'
+        specialties: ['Algebra', 'Calculus', 'Geometry']
+        bio: 'Experienced math tutor with proven track record'
+        cvUrl: 'https://example.com/cv.pdf'
+        rating: 4.8
+        totalStudents: 45
+
+    FileUpload:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        originalName:
+          type: string
+        mimetype:
+          type: string
+        size:
+          type: number
+        url:
+          type: string
+        uploadedBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      example:
+        id: '507f1f77bcf86cd7994390B0'
+        filename: 'file-123456.pdf'
+        originalName: 'homework.pdf'
+        mimetype: 'application/pdf'
+        size: 1048576
+        url: 'https://example.com/files/file-123456.pdf'
+        uploadedBy: '5ebac534954b54139806c112'
 
     UserStats:
       type: object
