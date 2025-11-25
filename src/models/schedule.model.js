@@ -39,6 +39,10 @@ const scheduleSchema = mongoose.Schema(
       enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
       default: 'upcoming',
     },
+    reportURL: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

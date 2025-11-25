@@ -8,4 +8,6 @@ module.exports.tutorInfoService = require('./tutorInfo.service');
 module.exports.assignmentService = require('./assignment.service');
 module.exports.homeworkService = require('./homework.service');
 module.exports.reviewService = require('./review.service');
+module.exports.homeworkReviewService = require('./homeworkReview.service');
 module.exports.fileService = require('./file.service');
+module.exports.reportService = require('./report.service');

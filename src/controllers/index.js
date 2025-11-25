@@ -7,3 +7,4 @@ module.exports.assignmentController = require('./assignment.controller');
 module.exports.homeworkController = require('./homework.controller');
 module.exports.reviewController = require('./review.controller');
 module.exports.fileController = require('./file.controller');
+module.exports.reportController = require('./report.controller');

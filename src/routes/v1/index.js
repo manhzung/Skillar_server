@@ -7,7 +7,9 @@ const tutorInfoRoute = require('./tutorInfo.route');
 const assignmentRoute = require('./assignment.route');
 const homeworkRoute = require('./homework.route');
 const reviewRoute = require('./review.route');
+const homeworkReviewRoute = require('./homeworkReview.route');
 const fileRoute = require('./file.route');
+const reportRoute = require('./report.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -47,8 +49,16 @@ const defaultRoutes = [
     route: reviewRoute,
   },
   {
+    path: '/homework-reviews',
+    route: homeworkReviewRoute,
+  },
+  {
     path: '/files',
     route: fileRoute,
+  },
+  {
+    path: '/reports',
+    route: reportRoute,
   },
 ];
 
