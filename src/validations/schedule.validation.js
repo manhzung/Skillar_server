@@ -5,7 +5,6 @@ const createSchedule = {
     body: Joi.object().keys({
         startTime: Joi.date().required(),
         duration: Joi.number().integer().min(1).required(),
-        subjectCode: Joi.string().required(),
         studentId: Joi.string().required().custom(objectId),
         tutorId: Joi.string().required().custom(objectId),
         meetingURL: Joi.string().uri(),
