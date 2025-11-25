@@ -17,20 +17,37 @@ const studentInfoSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    parentName: {
+    parent1Name: {
       type: String,
       trim: true,
     },
-    parentEmail: {
+    parent1Email: {
       type: String,
       trim: true,
       lowercase: true,
     },
-    parentNumber: {
+    parent1Number: {
       type: String,
       trim: true,
     },
-    parentRequest: {
+    parent1Request: {
+      type: String,
+      trim: true,
+    },
+    parent2Name: {
+      type: String,
+      trim: true,
+    },
+    parent2Email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    parent2Number: {
+      type: String,
+      trim: true,
+    },
+    parent2Request: {
       type: String,
       trim: true,
     },

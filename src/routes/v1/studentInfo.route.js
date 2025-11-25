@@ -42,19 +42,32 @@ router
  *               grade:
  *                 type: string
  *                 example: "Grade 10"
- *               parentName:
+ *               parent1Name:
  *                 type: string
  *                 example: "John Parent"
- *               parentEmail:
+ *               parent1Email:
  *                 type: string
  *                 format: email
- *                 example: "parent@example.com"
- *               parentNumber:
+ *                 example: "parent1@example.com"
+ *               parent1Number:
  *                 type: string
  *                 example: "+84123456789"
- *               parentRequest:
+ *               parent1Request:
  *                 type: string
  *                 example: "Focus on algebra"
+ *               parent2Name:
+ *                 type: string
+ *                 example: "Jane Parent"
+ *               parent2Email:
+ *                 type: string
+ *                 format: email
+ *                 example: "parent2@example.com"
+ *               parent2Number:
+ *                 type: string
+ *                 example: "+84987654321"
+ *               parent2Request:
+ *                 type: string
+ *                 example: "Help with geometry"
  *               academicLevel:
  *                 type: string
  *                 example: "Intermediate"
@@ -97,13 +110,21 @@ router
  *                   type: string
  *                 grade:
  *                   type: string
- *                 parentName:
+ *                 parent1Name:
  *                   type: string
- *                 parentEmail:
+ *                 parent1Email:
  *                   type: string
- *                 parentNumber:
+ *                 parent1Number:
  *                   type: string
- *                 parentRequest:
+ *                 parent1Request:
+ *                   type: string
+ *                 parent2Name:
+ *                   type: string
+ *                 parent2Email:
+ *                   type: string
+ *                 parent2Number:
+ *                   type: string
+ *                 parent2Request:
  *                   type: string
  *                 academicLevel:
  *                   type: string
@@ -167,13 +188,21 @@ router
  *                   type: string
  *                 grade:
  *                   type: string
- *                 parentName:
+ *                 parent1Name:
  *                   type: string
- *                 parentEmail:
+ *                 parent1Email:
  *                   type: string
- *                 parentNumber:
+ *                 parent1Number:
  *                   type: string
- *                 parentRequest:
+ *                 parent1Request:
+ *                   type: string
+ *                 parent2Name:
+ *                   type: string
+ *                 parent2Email:
+ *                   type: string
+ *                 parent2Number:
+ *                   type: string
+ *                 parent2Request:
  *                   type: string
  *                 academicLevel:
  *                   type: string
@@ -230,14 +259,23 @@ router
  *                 type: string
  *               grade:
  *                 type: string
- *               parentName:
+ *               parent1Name:
  *                 type: string
- *               parentEmail:
+ *               parent1Email:
  *                 type: string
  *                 format: email
- *               parentNumber:
+ *               parent1Number:
  *                 type: string
- *               parentRequest:
+ *               parent1Request:
+ *                 type: string
+ *               parent2Name:
+ *                 type: string
+ *               parent2Email:
+ *                 type: string
+ *                 format: email
+ *               parent2Number:
+ *                 type: string
+ *               parent2Request:
  *                 type: string
  *               academicLevel:
  *                 type: string
@@ -275,13 +313,21 @@ router
  *                   type: string
  *                 grade:
  *                   type: string
- *                 parentName:
+ *                 parent1Name:
  *                   type: string
- *                 parentEmail:
+ *                 parent1Email:
  *                   type: string
- *                 parentNumber:
+ *                 parent1Number:
  *                   type: string
- *                 parentRequest:
+ *                 parent1Request:
+ *                   type: string
+ *                 parent2Name:
+ *                   type: string
+ *                 parent2Email:
+ *                   type: string
+ *                 parent2Number:
+ *                   type: string
+ *                 parent2Request:
  *                   type: string
  *                 academicLevel:
  *                   type: string
@@ -343,4 +389,3 @@ router
  */
 
 module.exports = router;
-

@@ -347,14 +347,23 @@ components:
           type: string
         grade:
           type: string
-        parentName:
+        parent1Name:
           type: string
-        parentEmail:
+        parent1Email:
           type: string
           format: email
-        parentNumber:
+        parent1Number:
           type: string
-        parentRequest:
+        parent1Request:
+          type: string
+        parent2Name:
+          type: string
+        parent2Email:
+          type: string
+          format: email
+        parent2Number:
+          type: string
+        parent2Request:
           type: string
         academicLevel:
           type: string
@@ -387,10 +396,14 @@ components:
         userId: '5ebac534954b54139806c112'
         school: 'Hanoi High School'
         grade: 'Grade 10'
-        parentName: 'Nguyen Van B'
-        parentEmail: 'parent@example.com'
-        parentNumber: '+84987654321'
-        parentRequest: 'Focus on math improvement'
+        parent1Name: 'Nguyen Van B'
+        parent1Email: 'parent1@example.com'
+        parent1Number: '+84987654321'
+        parent1Request: 'Focus on math improvement'
+        parent2Name: 'Nguyen Thi C'
+        parent2Email: 'parent2@example.com'
+        parent2Number: '+84123456789'
+        parent2Request: 'Help with physics'
         academicLevel: 'Completed grade 9 curriculum, studying advanced topics'
         hobbies: ['Reading', 'Soccer']
         favoriteSubjects: ['Math', 'Physics']
