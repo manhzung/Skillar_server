@@ -183,6 +183,39 @@ const getTutorsPerSubject = async () => {
   return distribution;
 };
 
+/**
+ * Get students taught by a tutor
+ * @param {ObjectId} tutorId
+ * @returns {Promise<Array>}
+ */
+const getStudentsByTutorId = async (tutorId) => {
+  const { Schedule, StudentInfo } = require('../models');
+
+  // Find all distinct studentIds from schedules where tutorId matches
+  const studentIds = await Schedule.distinct('studentId', { tutorId });
+
+  if (!studentIds.length) {
+    return [];
+  }
+
+  // Fetch User details for these students
+  const students = await User.find({ _id: { $in: studentIds } }).lean();
+
+  // Fetch StudentInfo details for these students
+  const studentInfos = await StudentInfo.find({ userId: { $in: studentIds } }).lean();
+
+  // Merge User and StudentInfo
+  const result = students.map((student) => {
+    const info = studentInfos.find((info) => info.userId.toString() === student._id.toString());
+    return {
+      ...student,
+      studentInfo: info || null,
+    };
+  });
+
+  return result;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -194,4 +227,5 @@ module.exports = {
   countUsersByRole,
   getStudentsPerGrade,
   getTutorsPerSubject,
+  getStudentsByTutorId,
 };

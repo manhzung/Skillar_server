@@ -61,6 +61,20 @@ router
  *                 type: string
  *                 enum: [pending, in-progress, completed]
  *                 default: pending
+ *               supplementaryMaterials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - name
+ *                     - url
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "Lecture Slides"
+ *                     url:
+ *                       type: string
+ *                       example: "https://example.com/slides.pdf"
  *               tasks:
  *                 type: array
  *                 items:
@@ -117,6 +131,15 @@ router
  *                   type: string
  *                 status:
  *                   type: string
+ *                 supplementaryMaterials:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       url:
+ *                         type: string
  *                 tasks:
  *                   type: array
  *                   items:
@@ -243,6 +266,15 @@ router
  *                         type: string
  *                       status:
  *                         type: string
+ *                       supplementaryMaterials:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
+ *                             url:
+ *                               type: string
  *                       tasks:
  *                         type: array
  *                         items:
@@ -414,6 +446,15 @@ router
  *                   type: string
  *                 status:
  *                   type: string
+ *                 supplementaryMaterials:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       url:
+ *                         type: string
  *                 tasks:
  *                   type: array
  *                   items:
@@ -475,6 +516,15 @@ router
  *               status:
  *                 type: string
  *                 enum: [pending, in-progress, completed]
+ *               supplementaryMaterials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     url:
+ *                       type: string
  *               tasks:
  *                 type: array
  *                 items:
@@ -519,6 +569,15 @@ router
  *                   type: string
  *                 status:
  *                   type: string
+ *                 supplementaryMaterials:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       url:
+ *                         type: string
  *                 tasks:
  *                   type: array
  *                   items:

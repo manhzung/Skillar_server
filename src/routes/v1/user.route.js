@@ -28,6 +28,10 @@ router
   .get(auth(['admin']), userController.getLoggedInUserCount);
 
 router
+  .route('/my-students')
+  .get(auth(['admin', 'tutor']), userController.getStudentsByTutor);
+
+router
   .route('/:userId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(userValidation.getUser), userController.getUser)
   .patch(auth(['admin']), validate(userValidation.updateUser), userController.updateUser)
@@ -224,6 +228,60 @@ router
  *                   type: integer
  *                 totalResults:
  *                   type: integer
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ */
+
+/**
+ * @swagger
+ * /users/my-students:
+ *   get:
+ *     summary: Get students taught by the current tutor
+ *     description: Tutors can retrieve list of their students. Admins can use query param tutorId.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: tutorId
+ *         schema:
+ *           type: string
+ *         description: Tutor ID (Admin only)
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   name:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ *                   phone:
+ *                     type: string
+ *                   studentInfo:
+ *                     type: object
+ *                     properties:
+ *                       school:
+ *                         type: string
+ *                       grade:
+ *                         type: string
+ *                       parent1Name:
+ *                         type: string
+ *                       parent1Email:
+ *                         type: string
+ *                       parent1Number:
+ *                         type: string
  *       "401":
  *         description: Unauthorized
  *       "403":

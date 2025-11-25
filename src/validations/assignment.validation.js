@@ -18,6 +18,12 @@ const createAssignment = {
     description: Joi.string(),
     subject: Joi.string(),
     status: Joi.string().valid('pending', 'in-progress', 'completed'),
+    supplementaryMaterials: Joi.array().items(
+      Joi.object().keys({
+        name: Joi.string().required(),
+        url: Joi.string().required(),
+      })
+    ),
     tasks: Joi.array().items(taskSchema),
   }),
 };
@@ -58,6 +64,12 @@ const updateAssignment = {
       description: Joi.string(),
       subject: Joi.string(),
       status: Joi.string().valid('pending', 'in-progress', 'completed'),
+      supplementaryMaterials: Joi.array().items(
+        Joi.object().keys({
+          name: Joi.string().required(),
+          url: Joi.string().required(),
+        })
+      ),
       tasks: Joi.array().items(taskSchema),
     })
     .min(1),

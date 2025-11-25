@@ -192,43 +192,40 @@ const getSchedulesPerMonth = async (months = 6) => {
 };
 
 /**
- * Generate new meeting link for a schedule
- * @param {ObjectId} scheduleId
- * @returns {Promise<Schedule>}
+ * Generate new meeting link
+ * @param {Object} options
+ * @returns {Promise<Object>}
  */
-const generateMeetingLink = async (scheduleId) => {
-  const schedule = await getScheduleById(scheduleId);
-  if (!schedule) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
-  }
-  
+const generateMeetingLink = async (options = {}) => {
   // Generate new Jitsi meeting URL
   const newMeetingURL = generateMeetingUrl({
-    scheduleId: scheduleId,
-    date: schedule.startTime,
+    scheduleId: options.scheduleId,
+    date: options.date || new Date(),
     prefix: 'skillar-lesson',
+    roomName: options.roomName,
   });
   
-  // Update schedule with new meeting URL
-  schedule.meetingURL = newMeetingURL;
-  await schedule.save();
-  
-  return schedule;
+  return { meetingURL: newMeetingURL };
 };
 
 /**
  * Get today's lesson statistics
  * @returns {Promise<Object>}
  */
-const getTodayLessonStats = async () => {
+const getTodayLessonStats = async (filters = {}) => {
   const now = moment();
   const startOfDay = now.clone().startOf('day').toDate();
   const endOfDay = now.clone().endOf('day').toDate();
   const startOfWeek = now.clone().startOf('week').toDate();
   const endOfWeek = now.clone().endOf('week').toDate();
 
+  const baseFilter = {};
+  if (filters.studentId) baseFilter.studentId = filters.studentId;
+  if (filters.tutorId) baseFilter.tutorId = filters.tutorId;
+
   // Get today's schedules with populated fields
   const todaySchedulesWithDetails = await Schedule.find({
+    ...baseFilter,
     startTime: {
       $gte: startOfDay,
       $lte: endOfDay,
@@ -241,7 +238,7 @@ const getTodayLessonStats = async () => {
     .lean();
 
   // Get all schedules to find related assignments
-  const allSchedules = await Schedule.find().select('_id');
+  const allSchedules = await Schedule.find(baseFilter).select('_id');
   const scheduleIds = allSchedules.map((s) => s._id);
 
   // Get all assignments and homeworks updated today
@@ -255,6 +252,7 @@ const getTodayLessonStats = async () => {
   });
 
   const todayHomeworks = await Homework.find({
+    scheduleId: { $in: scheduleIds },
     $or: [
       { createdAt: { $gte: startOfDay, $lte: endOfDay } },
       { updatedAt: { $gte: startOfDay, $lte: endOfDay } },
@@ -287,6 +285,7 @@ const getTodayLessonStats = async () => {
 
   // Get this week's schedules
   const weekSchedules = await Schedule.find({
+    ...baseFilter,
     startTime: {
       $gte: startOfWeek,
       $lte: endOfWeek,

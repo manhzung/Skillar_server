@@ -64,6 +64,20 @@ const assignmentSchema = mongoose.Schema(
       enum: ['pending', 'in-progress', 'completed'],
       default: 'pending',
     },
+    supplementaryMaterials: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        url: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+      },
+    ],
     tasks: [assignmentDetailSchema],
   },
   {

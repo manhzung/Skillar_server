@@ -29,7 +29,7 @@ router
 
 router
   .route('/stats/today-lessons')
-  .get(auth(['admin', 'student', 'parent', 'tutor']), scheduleController.getTodayLessonStats);
+  .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getTodayLessonStats), scheduleController.getTodayLessonStats);
 
 router
   .route('/stats/student-dashboard')
@@ -44,7 +44,7 @@ router
   .get(auth(['admin', 'student', 'parent']), scheduleController.getCompletedTasksBySubject);
 
 router
-  .route('/:scheduleId/generate-meeting-link')
+  .route('/generate-meeting-link')
   .post(auth(['admin']), validate(scheduleValidation.generateMeetingLink), scheduleController.generateMeetingLink);
 
 router
@@ -55,60 +55,239 @@ router
 
 /**
  * @swagger
- * /schedules:
- *   post:
- *     summary: Create a new schedule
- *     description: Only admins can create schedules
+ * /schedules/stats/student-dashboard:
+ *   get:
+ *     summary: Get student dashboard statistics
+ *     description: Students, parents, and admins can access student dashboard statistics
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 todayTasks:
+ *                   type: object
+ *                   properties:
+ *                     completed:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     percentage:
+ *                       type: integer
+ *                 upcomingSessions:
+ *                   type: integer
+ *                 activeSubjects:
+ *                   type: integer
+ *                 nextLessonHours:
+ *                   type: number
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/time-allocation:
+ *   get:
+ *     summary: Get time allocation by subject
+ *     description: Students, parents, and admins can access time allocation statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       subjectCode:
+ *                         type: string
+ *                       hours:
+ *                         type: number
+ *                       percentage:
+ *                         type: integer
+ *                 totalHours:
+ *                   type: number
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/stats/completed-tasks:
+ *   get:
+ *     summary: Get completed tasks by subject
+ *     description: Students, parents, and admins can access completed tasks statistics
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 subjects:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       subject:
+ *                         type: string
+ *                       completed:
+ *                         type: integer
+ *                       total:
+ *                         type: integer
+ *                       percentage:
+ *                         type: integer
+ *                 overall:
+ *                   type: object
+ *                   properties:
+ *                     completed:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     percentage:
+ *                       type: integer
+ *       "401":
+ *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /schedules/generate-meeting-link:
+ *   post:
+ *     summary: Generate a meeting link
+ *     description: Only admins can generate meeting links
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 meetingURL:
+ *                   type: string
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ */
+
+/**
+ * @swagger
+ * /schedules/{scheduleId}:
+ *   get:
+ *     summary: Get a schedule
+ *     description: Logged in users can fetch schedule information
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: scheduleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Schedule ID
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 startTime:
+ *                   type: string
+ *                   format: date-time
+ *                 duration:
+ *                   type: integer
+ *                 subjectCode:
+ *                   type: string
+ *                 studentId:
+ *                   type: string
+ *                 tutorId:
+ *                   type: string
+ *                 meetingURL:
+ *                   type: string
+ *                 note:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "401":
+ *         description: Unauthorized
+ *       "404":
+ *         description: Not Found
+ *
+ *   patch:
+ *     summary: Update a schedule
+ *     description: Only admins can update schedules
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: scheduleId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Schedule ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - startTime
- *               - duration
- *               - subjectCode
- *               - studentId
- *               - tutorId
  *             properties:
  *               startTime:
  *                 type: string
  *                 format: date-time
- *                 example: "2024-01-15T10:00:00.000Z"
  *               duration:
  *                 type: integer
  *                 minimum: 1
- *                 description: Duration in minutes
- *                 example: 60
  *               subjectCode:
  *                 type: string
- *                 example: "MATH101"
  *               studentId:
  *                 type: string
- *                 description: User ID of the student
- *                 example: "507f1f77bcf86cd799439011"
  *               tutorId:
  *                 type: string
- *                 description: User ID of the tutor
- *                 example: "507f1f77bcf86cd799439012"
  *               meetingURL:
  *                 type: string
  *                 format: uri
- *                 example: "https://meet.example.com/room123"
  *               note:
  *                 type: string
- *                 example: "Review chapter 5"
  *               status:
  *                 type: string
  *                 enum: [upcoming, ongoing, completed, cancelled]
- *                 default: upcoming
  *     responses:
- *       "201":
- *         description: Created
+ *       "200":
+ *         description: OK
  *         content:
  *           application/json:
  *             schema:
@@ -145,100 +324,31 @@ router
  *         description: Unauthorized
  *       "403":
  *         description: Forbidden
+ *       "404":
+ *         description: Not Found
  *
- *   get:
- *     summary: Get all schedules
- *     description: Logged in users can retrieve all schedules
+ *   delete:
+ *     summary: Delete a schedule
+ *     description: Only admins can delete schedules
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: query
- *         name: studentId
+ *       - in: path
+ *         name: scheduleId
+ *         required: true
  *         schema:
  *           type: string
- *         description: Filter by student ID
- *       - in: query
- *         name: tutorId
- *         schema:
- *           type: string
- *         description: Filter by tutor ID
- *       - in: query
- *         name: subjectCode
- *         schema:
- *           type: string
- *         description: Filter by subject code
- *       - in: query
- *         name: status
- *         schema:
- *           type: string
- *           enum: [upcoming, ongoing, completed, cancelled]
- *         description: Filter by status
- *       - in: query
- *         name: sortBy
- *         schema:
- *           type: string
- *         description: Sort by field (e.g., startTime:desc)
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           minimum: 1
- *         description: Maximum number of results
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *           minimum: 1
- *         description: Page number
+ *         description: Schedule ID
  *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 results:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       startTime:
- *                         type: string
- *                         format: date-time
- *                       duration:
- *                         type: integer
- *                       subjectCode:
- *                         type: string
- *                       studentId:
- *                         type: string
- *                       tutorId:
- *                         type: string
- *                       meetingURL:
- *                         type: string
- *                       note:
- *                         type: string
- *                       status:
- *                         type: string
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                 page:
- *                   type: integer
- *                 limit:
- *                   type: integer
- *                 totalPages:
- *                   type: integer
- *                 totalResults:
- *                   type: integer
+ *       "204":
+ *         description: No Content
  *       "401":
  *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ *       "404":
+ *         description: Not Found
  */
 
 /**
@@ -392,6 +502,17 @@ router
  *     tags: [Schedules]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         description: Filter by student ID
+ *       - in: query
+ *         name: tutorId
+ *         schema:
+ *           type: string
+ *         description: Filter by tutor ID
  *     responses:
  *       "200":
  *         description: OK
@@ -557,200 +678,6 @@ router
  *         description: Unauthorized
  */
 
-/**
- * @swagger
- * /schedules/{scheduleId}/generate-meeting-link:
- *   post:
- *     summary: Generate meeting link for a schedule
- *     description: Only admins can generate meeting links
- *     tags: [Schedules]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: scheduleId
- *         required: true
- *         schema:
- *           type: string
- *         description: Schedule ID
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 meetingURL:
- *                   type: string
- *       "401":
- *         description: Unauthorized
- *       "403":
- *         description: Forbidden
- *       "404":
- *         description: Not Found
- */
 
-/**
- * @swagger
- * /schedules/{scheduleId}:
- *   get:
- *     summary: Get a schedule
- *     description: Logged in users can fetch schedule information
- *     tags: [Schedules]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: scheduleId
- *         required: true
- *         schema:
- *           type: string
- *         description: Schedule ID
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 startTime:
- *                   type: string
- *                   format: date-time
- *                 duration:
- *                   type: integer
- *                 subjectCode:
- *                   type: string
- *                 studentId:
- *                   type: string
- *                 tutorId:
- *                   type: string
- *                 meetingURL:
- *                   type: string
- *                 note:
- *                   type: string
- *                 status:
- *                   type: string
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *       "401":
- *         description: Unauthorized
- *       "404":
- *         description: Not Found
- *
- *   patch:
- *     summary: Update a schedule
- *     description: Only admins can update schedules
- *     tags: [Schedules]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: scheduleId
- *         required: true
- *         schema:
- *           type: string
- *         description: Schedule ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               startTime:
- *                 type: string
- *                 format: date-time
- *               duration:
- *                 type: integer
- *                 minimum: 1
- *               subjectCode:
- *                 type: string
- *               studentId:
- *                 type: string
- *               tutorId:
- *                 type: string
- *               meetingURL:
- *                 type: string
- *                 format: uri
- *               note:
- *                 type: string
- *               status:
- *                 type: string
- *                 enum: [upcoming, ongoing, completed, cancelled]
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 startTime:
- *                   type: string
- *                   format: date-time
- *                 duration:
- *                   type: integer
- *                 subjectCode:
- *                   type: string
- *                 studentId:
- *                   type: string
- *                 tutorId:
- *                   type: string
- *                 meetingURL:
- *                   type: string
- *                 note:
- *                   type: string
- *                 status:
- *                   type: string
- *                 createdAt:
- *                   type: string
- *                   format: date-time
- *                 updatedAt:
- *                   type: string
- *                   format: date-time
- *       "400":
- *         description: Bad Request
- *       "401":
- *         description: Unauthorized
- *       "403":
- *         description: Forbidden
- *       "404":
- *         description: Not Found
- *
- *   delete:
- *     summary: Delete a schedule
- *     description: Only admins can delete schedules
- *     tags: [Schedules]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: scheduleId
- *         required: true
- *         schema:
- *           type: string
- *         description: Schedule ID
- *     responses:
- *       "204":
- *         description: No Content
- *       "401":
- *         description: Unauthorized
- *       "403":
- *         description: Forbidden
- *       "404":
- *         description: Not Found
- */
 
 module.exports = router;

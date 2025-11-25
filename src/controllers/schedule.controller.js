@@ -54,12 +54,13 @@ const getSchedulesPerMonth = catchAsync(async (req, res) => {
 });
 
 const generateMeetingLink = catchAsync(async (req, res) => {
-  const schedule = await scheduleService.generateMeetingLink(req.params.scheduleId);
-  res.send(schedule);
+  const result = await scheduleService.generateMeetingLink(req.body);
+  res.send(result);
 });
 
 const getTodayLessonStats = catchAsync(async (req, res) => {
-  const stats = await scheduleService.getTodayLessonStats();
+  const filters = pick(req.query, ['studentId', 'tutorId']);
+  const stats = await scheduleService.getTodayLessonStats(filters);
   res.send(stats);
 });
 

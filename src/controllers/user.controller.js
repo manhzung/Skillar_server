@@ -63,6 +63,18 @@ const getLoggedInUserCount = catchAsync(async (req, res) => {
   res.send({ count });
 });
 
+const getStudentsByTutor = catchAsync(async (req, res) => {
+  // If admin, can pass tutorId in query or params. If tutor, use own id.
+  // For now, let's assume it's for the logged in tutor or specific tutorId if provided and admin
+  let tutorId = req.user.id;
+  if (req.user.role === 'admin' && req.query.tutorId) {
+    tutorId = req.query.tutorId;
+  }
+  
+  const students = await userService.getStudentsByTutorId(tutorId);
+  res.send(students);
+});
+
 module.exports = {
   createUser,
   getUsers,
@@ -73,4 +85,5 @@ module.exports = {
   getStudentsPerGrade,
   getTutorsPerSubject,
   getLoggedInUserCount,
+  getStudentsByTutor,
 };

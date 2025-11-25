@@ -57,8 +57,17 @@ const deleteSchedule = {
 };
 
 const generateMeetingLink = {
-    params: Joi.object().keys({
-        scheduleId: Joi.string().custom(objectId).required(),
+    body: Joi.object().keys({
+        scheduleId: Joi.string().custom(objectId),
+        date: Joi.date(),
+        roomName: Joi.string(),
+    }),
+};
+
+const getTodayLessonStats = {
+    query: Joi.object().keys({
+        studentId: Joi.string().custom(objectId),
+        tutorId: Joi.string().custom(objectId),
     }),
 };
 
@@ -69,4 +78,5 @@ module.exports = {
     updateSchedule,
     deleteSchedule,
     generateMeetingLink,
+    getTodayLessonStats,
 };
