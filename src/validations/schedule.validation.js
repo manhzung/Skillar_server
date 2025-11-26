@@ -11,6 +11,21 @@ const createSchedule = {
         meetingURL: Joi.string().uri(),
         note: Joi.string(),
         status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
+        supplementaryMaterials: Joi.array().items(
+            Joi.object().keys({
+                name: Joi.string().required(),
+                documentURL: Joi.string().uri().required(),
+                description: Joi.string().allow(''),
+            })
+        ),
+        overallRating: Joi.string(),
+        reviews: Joi.array().items(
+            Joi.object().keys({
+                name: Joi.string().required(),
+                rating: Joi.number().integer().min(1).max(5).required(),
+                comment: Joi.string().allow(''),
+            })
+        ),
     }),
 };
 
@@ -19,7 +34,6 @@ const getSchedules = {
         studentId: Joi.string().custom(objectId),
         tutorId: Joi.string().custom(objectId),
         subjectCode: Joi.string(),
-        status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
         sortBy: Joi.string(),
         limit: Joi.number().integer(),
         page: Joi.number().integer(),
@@ -46,6 +60,21 @@ const updateSchedule = {
             meetingURL: Joi.string().uri(),
             note: Joi.string(),
             status: Joi.string().valid('upcoming', 'ongoing', 'completed', 'cancelled'),
+            supplementaryMaterials: Joi.array().items(
+                Joi.object().keys({
+                    name: Joi.string().required(),
+                    documentURL: Joi.string().uri().required(),
+                    description: Joi.string().allow(''),
+                })
+            ),
+            overallRating: Joi.string(),
+            reviews: Joi.array().items(
+                Joi.object().keys({
+                    name: Joi.string().required(),
+                    rating: Joi.number().integer().min(1).max(5).required(),
+                    comment: Joi.string().allow(''),
+                })
+            ),
         })
         .min(1),
 };

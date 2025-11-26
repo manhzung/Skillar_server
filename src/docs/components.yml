@@ -73,6 +73,35 @@ components:
         status:
           type: string
           enum: [upcoming, ongoing, completed, cancelled]
+        reportURL:
+          type: string
+        supplementaryMaterials:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              documentURL:
+                type: string
+                format: uri
+              description:
+                type: string
+        overallRating:
+          type: string
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+              comment:
+                type: string
         createdAt:
           type: string
           format: date-time
@@ -89,19 +118,29 @@ components:
         meetingURL: 'https://meet.jit.si/skillar-math-abc123'
         note: 'Review chapter 2'
         status: 'upcoming'
+        supplementaryMaterials:
+          - name: 'Chapter 5 Notes'
+            documentURL: 'https://res.cloudinary.com/demo/raw/upload/v1/skillar/notes.pdf'
+            description: 'Main lesson notes'
+          - name: 'Practice Problems'
+            documentURL: 'https://res.cloudinary.com/demo/raw/upload/v1/skillar/practice.pdf'
+            description: 'Additional exercises'
+        overallRating: 'Excellent session'
+        reviews:
+          - name: 'Communication'
+            rating: 5
+            comment: 'Very clear'
 
     AssignmentDetail:
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
         estimatedTime:
-          type: number
+          type: integer
           description: In minutes
         actualTime:
-          type: number
+          type: integer
           description: In minutes
         assignmentUrl:
           type: string

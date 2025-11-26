@@ -107,6 +107,11 @@ router
  *                       type: string
  *                       format: uri
  *                       example: "https://example.com/solution.pdf"
+ *                     answerURL:
+ *                       type: string
+ *                       format: uri
+ *                       description: Student's answer/solution file URL
+ *                       example: "https://example.com/student-answer.pdf"
  *                     status:
  *                       type: string
  *                       enum: [pending, in-progress, completed, submitted, graded]
@@ -161,6 +166,8 @@ router
  *                       assignmentUrl:
  *                         type: string
  *                       solutionUrl:
+ *                         type: string
+ *                       answerURL:
  *                         type: string
  *                       status:
  *                         type: string
@@ -302,6 +309,8 @@ router
  *                               type: string
  *                             solutionUrl:
  *                               type: string
+ *                             answerURL:
+ *                               type: string
  *                             status:
  *                               type: string
  *                             description:
@@ -381,6 +390,8 @@ router
  *                             assignmentUrl:
  *                               type: string
  *                             solutionUrl:
+ *                               type: string
+ *                             answerURL:
  *                               type: string
  *                             status:
  *                               type: string
@@ -484,6 +495,8 @@ router
  *                         type: string
  *                       solutionUrl:
  *                         type: string
+ *                       answerURL:
+ *                         type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -558,6 +571,10 @@ router
  *                     solutionUrl:
  *                       type: string
  *                       format: uri
+ *                     answerURL:
+ *                       type: string
+ *                       format: uri
+ *                       description: Student's answer/solution file URL
  *                     status:
  *                       type: string
  *                       enum: [pending, in-progress, completed, submitted, graded]
@@ -610,6 +627,8 @@ router
  *                       assignmentUrl:
  *                         type: string
  *                       solutionUrl:
+ *                         type: string
+ *                       answerURL:
  *                         type: string
  *                       status:
  *                         type: string
@@ -692,6 +711,11 @@ router
  *                 type: string
  *                 format: uri
  *                 example: "https://example.com/solution.pdf"
+ *               answerURL:
+ *                 type: string
+ *                 format: uri
+ *                 description: Student's answer/solution file URL
+ *                 example: "https://example.com/student-answer.pdf"
  *               status:
  *                 type: string
  *                 enum: [submitted]
@@ -729,6 +753,8 @@ router
  *                       assignmentUrl:
  *                         type: string
  *                       solutionUrl:
+ *                         type: string
+ *                       answerURL:
  *                         type: string
  *                       status:
  *                         type: string

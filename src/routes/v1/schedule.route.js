@@ -52,6 +52,21 @@ router
  *               status:
  *                 type: string
  *                 enum: [upcoming, ongoing, completed, cancelled]
+ *               supplementaryMaterials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - name
+ *                     - documentURL
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     documentURL:
+ *                       type: string
+ *                       format: uri
+ *                     description:
+ *                       type: string
  *     responses:
  *       "201":
  *         description: Created
@@ -359,6 +374,19 @@ router
  *                   type: string
  *                 status:
  *                   type: string
+ *                 reportURL:
+ *                   type: string
+ *                 supplementaryMaterials:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       documentURL:
+ *                         type: string
+ *                       description:
+ *                         type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -410,6 +438,39 @@ router
  *               status:
  *                 type: string
  *                 enum: [upcoming, ongoing, completed, cancelled]
+ *               supplementaryMaterials:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - name
+ *                     - documentURL
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     documentURL:
+ *                       type: string
+ *                       format: uri
+ *                     description:
+ *                       type: string
+ *               overallRating:
+ *                 type: string
+ *               reviews:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - name
+ *                     - rating
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     rating:
+ *                       type: integer
+ *                       minimum: 1
+ *                       maximum: 5
+ *                     comment:
+ *                       type: string
  *     responses:
  *       "200":
  *         description: OK
@@ -437,6 +498,32 @@ router
  *                   type: string
  *                 status:
  *                   type: string
+ *                 reportURL:
+ *                   type: string
+ *                 supplementaryMaterials:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       documentURL:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 overallRating:
+ *                   type: string
+ *                 reviews:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       rating:
+ *                         type: integer
+ *                       comment:
+ *                         type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time

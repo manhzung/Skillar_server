@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 const httpStatus = require('http-status');
 const { Schedule, Assignment, Homework } = require('../models');
 const ApiError = require('../utils/ApiError');
@@ -92,8 +92,8 @@ const deleteScheduleById = async (scheduleId) => {
  * @returns {Promise<number>}
  */
 const countTodaySchedules = async () => {
-  const startOfDay = moment().startOf('day').toDate();
-  const endOfDay = moment().endOf('day').toDate();
+  const startOfDay = moment.utc().startOf('day').toDate();
+  const endOfDay = moment.utc().endOf('day').toDate();
 
   return Schedule.countDocuments({
     startTime: {
@@ -139,8 +139,8 @@ const getStudentsPerWeek = async (weeks = 4) => {
   const weeksData = [];
   
   for (let i = 0; i < weeks; i++) {
-    const weekStart = moment().subtract(i, 'weeks').startOf('week').toDate();
-    const weekEnd = moment().subtract(i, 'weeks').endOf('week').toDate();
+    const weekStart = moment.utc().subtract(i, 'weeks').startOf('week').toDate();
+    const weekEnd = moment.utc().subtract(i, 'weeks').endOf('week').toDate();
     
     // Get distinct students who had schedules in this week
     const students = await Schedule.distinct('studentId', {
@@ -170,8 +170,8 @@ const getSchedulesPerMonth = async (months = 6) => {
   const monthsData = [];
   
   for (let i = 0; i < months; i++) {
-    const monthStart = moment().subtract(i, 'months').startOf('month').toDate();
-    const monthEnd = moment().subtract(i, 'months').endOf('month').toDate();
+    const monthStart = moment.utc().subtract(i, 'months').startOf('month').toDate();
+    const monthEnd = moment.utc().subtract(i, 'months').endOf('month').toDate();
     
     const count = await Schedule.countDocuments({
       startTime: {
@@ -213,7 +213,7 @@ const generateMeetingLink = async (options = {}) => {
  * @returns {Promise<Object>}
  */
 const getTodayLessonStats = async (filters = {}) => {
-  const now = moment();
+  const now = moment.utc();
   const startOfDay = now.clone().startOf('day').toDate();
   const endOfDay = now.clone().endOf('day').toDate();
   const startOfWeek = now.clone().startOf('week').toDate();
@@ -316,7 +316,7 @@ const getTodayLessonStats = async (filters = {}) => {
  * @returns {Promise<Object>}
  */
 const getStudentDashboardStats = async (studentId) => {
-  const now = moment();
+  const now = moment.utc();
   const startOfDay = now.clone().startOf('day').toDate();
   const endOfDay = now.clone().endOf('day').toDate();
   const startOfNext7Days = now.clone().toDate();

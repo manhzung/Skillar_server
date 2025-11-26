@@ -43,6 +43,47 @@ const scheduleSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    supplementaryMaterials: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        documentURL: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        description: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    overallRating: {
+      type: String,
+      trim: true,
+    },
+    reviews: [
+      {
+        name: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
+        },
+        comment: {
+          type: String,
+          trim: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

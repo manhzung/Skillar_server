@@ -39,28 +39,6 @@ router
  *                 type: string
  *                 description: Schedule ID
  *                 example: "507f1f77bcf86cd799439011"
- *               overallRating:
- *                 type: string
- *                 example: "Good progress"
- *               reviews:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - name
- *                     - rating
- *                   properties:
- *                     name:
- *                       type: string
- *                       example: "Understanding"
- *                     rating:
- *                       type: integer
- *                       minimum: 1
- *                       maximum: 5
- *                       example: 4
- *                     comment:
- *                       type: string
- *                       example: "Student shows good understanding"
  *               assignmentGrades:
  *                 type: array
  *                 items:
@@ -92,19 +70,6 @@ router
  *                   type: string
  *                 scheduleId:
  *                   type: string
- *                 overallRating:
- *                   type: string
- *                 reviews:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       rating:
- *                         type: integer
- *                       comment:
- *                         type: string
  *                 assignmentGrades:
  *                   type: array
  *                   items:
@@ -185,19 +150,6 @@ router
  *                         type: string
  *                       scheduleId:
  *                         type: string
- *                       overallRating:
- *                         type: string
- *                       reviews:
- *                         type: array
- *                         items:
- *                           type: object
- *                           properties:
- *                             name:
- *                               type: string
- *                             rating:
- *                               type: integer
- *                             comment:
- *                               type: string
  *                       assignmentGrades:
  *                         type: array
  *                         items:
@@ -255,19 +207,6 @@ router
  *                   type: string
  *                 scheduleId:
  *                   type: string
- *                 overallRating:
- *                   type: string
- *                 reviews:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       rating:
- *                         type: integer
- *                       comment:
- *                         type: string
  *                 assignmentGrades:
  *                   type: array
  *                   items:
@@ -310,21 +249,6 @@ router
  *           schema:
  *             type: object
  *             properties:
- *               overallRating:
- *                 type: string
- *               reviews:
- *                 type: array
- *                 items:
- *                   type: object
- *                   properties:
- *                     name:
- *                       type: string
- *                     rating:
- *                       type: integer
- *                       minimum: 1
- *                       maximum: 5
- *                     comment:
- *                       type: string
  *               assignmentGrades:
  *                 type: array
  *                 items:
@@ -350,19 +274,6 @@ router
  *                   type: string
  *                 scheduleId:
  *                   type: string
- *                 overallRating:
- *                   type: string
- *                 reviews:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       name:
- *                         type: string
- *                       rating:
- *                         type: integer
- *                       comment:
- *                         type: string
  *                 assignmentGrades:
  *                   type: array
  *                   items:

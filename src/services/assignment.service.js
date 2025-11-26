@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const { Assignment, Schedule } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { USER_SELECT_FIELDS } = require('../constants');
@@ -66,16 +66,12 @@ const queryAssignments = async (filter, options) => {
   if (filter.startDate || filter.endDate) {
     filter.createdAt = {};
     if (filter.startDate) {
-      // Set start of day for startDate
-      const startDate = new Date(filter.startDate);
-      startDate.setHours(0, 0, 0, 0);
-      filter.createdAt.$gte = startDate;
+      // Set start of day for startDate in UTC
+      filter.createdAt.$gte = moment.utc(filter.startDate).startOf('day').toDate();
     }
     if (filter.endDate) {
-      // Set end of day for endDate
-      const endDate = new Date(filter.endDate);
-      endDate.setHours(23, 59, 59, 999);
-      filter.createdAt.$lte = endDate;
+      // Set end of day for endDate in UTC
+      filter.createdAt.$lte = moment.utc(filter.endDate).endOf('day').toDate();
     }
     delete filter.startDate;
     delete filter.endDate;
@@ -202,7 +198,7 @@ const submitAssignmentTask = async (assignmentId, taskId, submitData) => {
  * @returns {Promise<Object>}
  */
 const getTodayAssignmentsStats = async () => {
-  const now = moment();
+  const now = moment.utc();
   const startOfDay = now.clone().startOf('day').toDate();
   const endOfDay = now.clone().endOf('day').toDate();
 

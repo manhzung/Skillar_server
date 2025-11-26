@@ -1,12 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 
-const reviewItemSchema = Joi.object().keys({
-  name: Joi.string().required(),
-  rating: Joi.number().integer().min(1).max(5).required(),
-  comment: Joi.string(),
-});
-
 const assignmentGradeSchema = Joi.object().keys({
   taskId: Joi.string().custom(objectId).required(),
   result: Joi.number().min(0).max(100),
@@ -16,8 +10,6 @@ const assignmentGradeSchema = Joi.object().keys({
 const createReview = {
   body: Joi.object().keys({
     scheduleId: Joi.string().custom(objectId).required(),
-    overallRating: Joi.string(),
-    reviews: Joi.array().items(reviewItemSchema),
     assignmentGrades: Joi.array().items(assignmentGradeSchema),
   }),
 };
@@ -45,8 +37,6 @@ const updateReview = {
   }),
   body: Joi.object()
     .keys({
-      overallRating: Joi.string(),
-      reviews: Joi.array().items(reviewItemSchema),
       assignmentGrades: Joi.array().items(assignmentGradeSchema),
     })
     .min(1),

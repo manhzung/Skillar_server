@@ -1,27 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const reviewItemSchema = mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    rating: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 5,
-    },
-    comment: {
-      type: String,
-      trim: true,
-    },
-  },
-  { _id: false }
-);
-
 const assignmentReviewSchema = mongoose.Schema(
   {
     taskId: {
@@ -48,11 +27,6 @@ const reviewSchema = mongoose.Schema(
       ref: 'Schedule',
       required: true,
     },
-    overallRating: {
-      type: String,
-      trim: true,
-    },
-    reviews: [reviewItemSchema],
     assignmentGrades: [assignmentReviewSchema],
   },
   {

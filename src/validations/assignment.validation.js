@@ -7,6 +7,7 @@ const taskSchema = Joi.object().keys({
   actualTime: Joi.number().integer().min(0),
   assignmentUrl: Joi.string(),
   solutionUrl: Joi.string(),
+  answerURL: Joi.string().uri(),
   status: Joi.string().valid('pending', 'in-progress', 'completed', 'submitted', 'graded'),
   description: Joi.string(),
 });
@@ -91,6 +92,7 @@ const submitTask = {
   body: Joi.object().keys({
     actualTime: Joi.number().integer().min(0),
     solutionUrl: Joi.string(),
+    answerURL: Joi.string().uri(),
     status: Joi.string().valid('submitted'),
     description: Joi.string(),
   }),

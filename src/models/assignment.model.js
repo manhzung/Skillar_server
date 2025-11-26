@@ -23,6 +23,10 @@ const assignmentDetailSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    answerURL: {
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
       enum: ['pending', 'in-progress', 'completed', 'submitted', 'graded'],
