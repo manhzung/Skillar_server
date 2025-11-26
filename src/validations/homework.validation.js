@@ -5,6 +5,7 @@ const taskSchema = Joi.object().keys({
   name: Joi.string().required(),
   assignmentUrl: Joi.string(),
   solutionUrl: Joi.string(),
+  answerURL: Joi.string(),
   status: Joi.string().valid('pending', 'submitted', 'graded'),
   description: Joi.string(),
 });
@@ -70,6 +71,7 @@ const submitTask = {
   }),
   body: Joi.object().keys({
     solutionUrl: Joi.string(),
+    answerURL: Joi.string(),
     status: Joi.string().valid('submitted'),
     description: Joi.string(),
   }),

@@ -119,6 +119,9 @@ router
  *                     description:
  *                       type: string
  *                       example: "Solve quadratic equations"
+ *                     note:
+ *                       type: string
+ *                       example: "Remember to show your work"
  *     responses:
  *       "201":
  *         description: Created
@@ -172,6 +175,8 @@ router
  *                       status:
  *                         type: string
  *                       description:
+ *                         type: string
+ *                       note:
  *                         type: string
  *                 createdAt:
  *                   type: string
@@ -315,6 +320,8 @@ router
  *                               type: string
  *                             description:
  *                               type: string
+ *                             note:
+ *                               type: string
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -396,6 +403,8 @@ router
  *                             status:
  *                               type: string
  *                             description:
+ *                               type: string
+ *                             note:
  *                               type: string
  *                       taskStats:
  *                         type: object
@@ -501,6 +510,8 @@ router
  *                         type: string
  *                       description:
  *                         type: string
+ *                       note:
+ *                         type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -580,6 +591,8 @@ router
  *                       enum: [pending, in-progress, completed, submitted, graded]
  *                     description:
  *                       type: string
+ *                     note:
+ *                       type: string
  *     responses:
  *       "200":
  *         description: OK
@@ -633,6 +646,8 @@ router
  *                       status:
  *                         type: string
  *                       description:
+ *                         type: string
+ *                       note:
  *                         type: string
  *                 createdAt:
  *                   type: string
@@ -723,6 +738,9 @@ router
  *               description:
  *                 type: string
  *                 example: "Completed the task"
+ *               note:
+ *                 type: string
+ *                 example: "I found this difficult"
  *     responses:
  *       "200":
  *         description: OK
@@ -759,6 +777,8 @@ router
  *                       status:
  *                         type: string
  *                       description:
+ *                         type: string
+ *                       note:
  *                         type: string
  *       "400":
  *         description: Bad Request

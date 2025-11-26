@@ -16,6 +16,10 @@ const homeworkDetailSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    answerURL: {
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
       enum: ['pending', 'submitted', 'graded'],

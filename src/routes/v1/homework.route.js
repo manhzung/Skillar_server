@@ -76,7 +76,7 @@ router
  *                   properties:
  *                     name:
  *                       type: string
- *                       example: "Task 1"
+ *                       example: "Solve quadratic equations"
  *                     assignmentUrl:
  *                       type: string
  *                       format: uri
@@ -85,6 +85,11 @@ router
  *                       type: string
  *                       format: uri
  *                       example: "https://example.com/solution.pdf"
+ *                     answerURL:
+ *                       type: string
+ *                       format: uri
+ *                       description: Student's answer/solution file URL
+ *                       example: "https://example.com/student-answer.pdf"
  *                     status:
  *                       type: string
  *                       enum: [pending, submitted, graded]
@@ -129,6 +134,8 @@ router
  *                       assignmentUrl:
  *                         type: string
  *                       solutionUrl:
+ *                         type: string
+ *                       answerURL:
  *                         type: string
  *                       status:
  *                         type: string
@@ -241,6 +248,8 @@ router
  *                               type: string
  *                             solutionUrl:
  *                               type: string
+ *                             answerURL:
+ *                               type: string
  *                             status:
  *                               type: string
  *                             description:
@@ -317,6 +326,8 @@ router
  *                         type: string
  *                       solutionUrl:
  *                         type: string
+ *                       answerURL:
+ *                         type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -377,6 +388,9 @@ router
  *                     solutionUrl:
  *                       type: string
  *                       format: uri
+ *                     answerURL:
+ *                       type: string
+ *                       format: uri
  *                     status:
  *                       type: string
  *                       enum: [pending, submitted, graded]
@@ -419,6 +433,8 @@ router
  *                       assignmentUrl:
  *                         type: string
  *                       solutionUrl:
+ *                         type: string
+ *                       answerURL:
  *                         type: string
  *                       status:
  *                         type: string
@@ -496,6 +512,11 @@ router
  *                 type: string
  *                 format: uri
  *                 example: "https://example.com/solution.pdf"
+ *               answerURL:
+ *                 type: string
+ *                 format: uri
+ *                 description: Student's answer/solution file URL
+ *                 example: "https://example.com/student-answer.pdf"
  *               status:
  *                 type: string
  *                 enum: [submitted]
@@ -532,6 +553,8 @@ router
  *                         type: string
  *                       solutionUrl:
  *                         type: string
+ *                       answerURL:
+ *                         type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -547,4 +570,3 @@ router
  */
 
 module.exports = router;
-

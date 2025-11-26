@@ -36,6 +36,10 @@ const assignmentDetailSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    note: {
+      type: String,
+      trim: true,
+    },
   },
   { _id: true },
   {

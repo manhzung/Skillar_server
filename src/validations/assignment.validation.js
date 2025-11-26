@@ -10,6 +10,7 @@ const taskSchema = Joi.object().keys({
   answerURL: Joi.string().uri(),
   status: Joi.string().valid('pending', 'in-progress', 'completed', 'submitted', 'graded'),
   description: Joi.string(),
+  note: Joi.string(),
 });
 
 const createAssignment = {
@@ -95,6 +96,7 @@ const submitTask = {
     answerURL: Joi.string().uri(),
     status: Joi.string().valid('submitted'),
     description: Joi.string(),
+    note: Joi.string(),
   }),
 };
 
