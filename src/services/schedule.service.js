@@ -57,20 +57,28 @@ const getScheduleById = async (id) => {
  * Update schedule by id
  * @param {ObjectId} scheduleId
  * @param {Object} updateBody
+ * @param {Object} user - Current user
  * @returns {Promise<Schedule>}
  */
-const updateScheduleById = async (scheduleId, updateBody) => {
-  const schedule = await Schedule.findByIdAndUpdate(scheduleId, updateBody, {
-    new: true,
-    runValidators: true,
-  })
-    .populate('studentId', USER_SELECT_FIELDS)
-    .populate('tutorId', USER_SELECT_FIELDS);
-  
+const updateScheduleById = async (scheduleId, updateBody, user) => {
+  const schedule = await getScheduleById(scheduleId);
+
   if (!schedule) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
   }
-  
+
+  // Check authorization
+  if (user.role !== 'admin') {
+    if (user.role === 'tutor' && schedule.tutorId.id !== user.id) {
+      throw new ApiError(httpStatus.FORBIDDEN, 'You are not authorized to update this schedule');
+    }
+    if (user.role === 'student' && schedule.studentId.id !== user.id) {
+      throw new ApiError(httpStatus.FORBIDDEN, 'You are not authorized to update this schedule');
+    }
+  }
+
+  Object.assign(schedule, updateBody);
+  await schedule.save();
   return schedule;
 };
 

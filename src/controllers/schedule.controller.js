@@ -22,7 +22,7 @@ const getSchedule = catchAsync(async (req, res) => {
 });
 
 const updateSchedule = catchAsync(async (req, res) => {
-  const schedule = await scheduleService.updateScheduleById(req.params.scheduleId, req.body);
+  const schedule = await scheduleService.updateScheduleById(req.params.scheduleId, req.body, req.user);
   res.send(schedule);
 });
 

@@ -190,7 +190,7 @@ router
 router
   .route('/:scheduleId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedule), scheduleController.getSchedule)
-  .patch(auth(['admin']), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
+  .patch(auth(['admin', 'tutor', 'student']), validate(scheduleValidation.updateSchedule), scheduleController.updateSchedule)
   .delete(auth(['admin']), validate(scheduleValidation.deleteSchedule), scheduleController.deleteSchedule);
 
 /**
