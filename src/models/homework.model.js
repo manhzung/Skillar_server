@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { HOMEWORK_TASK_STATUS } = require('../constants');
 
 const homeworkDetailSchema = mongoose.Schema(
   {
@@ -19,8 +18,8 @@ const homeworkDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: Object.values(HOMEWORK_TASK_STATUS),
-      default: HOMEWORK_TASK_STATUS.PENDING,
+      enum: ['pending', 'submitted', 'graded'],
+      default: 'pending',
     },
     description: {
       type: String,

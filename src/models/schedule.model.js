@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { SCHEDULE_STATUS } = require('../constants');
 
 const scheduleSchema = mongoose.Schema(
   {
@@ -37,8 +36,8 @@ const scheduleSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: Object.values(SCHEDULE_STATUS),
-      default: SCHEDULE_STATUS.UPCOMING,
+      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
+      default: 'upcoming',
     },
     reportURL: {
       type: String,

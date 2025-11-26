@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { ASSIGNMENT_STATUS, ASSIGNMENT_TASK_STATUS } = require('../constants');
 
 const assignmentDetailSchema = mongoose.Schema(
   {
@@ -30,8 +29,8 @@ const assignmentDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: Object.values(ASSIGNMENT_TASK_STATUS),
-      default: ASSIGNMENT_TASK_STATUS.PENDING,
+      enum: ['pending', 'in-progress', 'completed', 'submitted', 'graded'],
+      default: 'pending',
     },
     description: {
       type: String,
@@ -66,8 +65,8 @@ const assignmentSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: Object.values(ASSIGNMENT_STATUS),
-      default: ASSIGNMENT_STATUS.PENDING,
+      enum: ['pending', 'in-progress', 'completed'],
+      default: 'pending',
     },
     supplementaryMaterials: [
       {
