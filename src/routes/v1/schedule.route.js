@@ -11,6 +11,131 @@ router
   .post(auth(['admin']), validate(scheduleValidation.createSchedule), scheduleController.createSchedule)
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedules), scheduleController.getSchedules);
 
+/**
+ * @swagger
+ * /schedules:
+ *   post:
+ *     summary: Create a schedule
+ *     description: Only admins can create schedules for students and tutors
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startTime
+ *               - duration
+ *               - studentId
+ *               - tutorId
+ *             properties:
+ *               startTime:
+ *                 type: string
+ *                 format: date-time
+ *               duration:
+ *                 type: integer
+ *                 minimum: 1
+ *               subjectCode:
+ *                 type: string
+ *               studentId:
+ *                 type: string
+ *               tutorId:
+ *                 type: string
+ *               meetingURL:
+ *                 type: string
+ *                 format: uri
+ *               note:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [upcoming, ongoing, completed, cancelled]
+ *     responses:
+ *       "201":
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Schedule'
+ *       "400":
+ *         description: Bad Request
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ *
+ *   get:
+ *     summary: Get schedules
+ *     description: Admins can view all schedules. Students, parents, and tutors can view schedules relevant to them.
+ *     tags: [Schedules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: studentId
+ *         schema:
+ *           type: string
+ *         description: Filter by student ID
+ *       - in: query
+ *         name: tutorId
+ *         schema:
+ *           type: string
+ *         description: Filter by tutor ID
+ *       - in: query
+ *         name: subjectCode
+ *         schema:
+ *           type: string
+ *         description: Filter by subject code
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [upcoming, ongoing, completed, cancelled]
+ *         description: Filter by schedule status
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           example: startTime:asc
+ *         description: Sort format field:(asc|desc)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Maximum results per page
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Schedule'
+ *                 page:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 totalResults:
+ *                   type: integer
+ *       "401":
+ *         description: Unauthorized
+ */
+
 router
   .route('/stats/today')
   .get(auth(['admin']), scheduleController.getTodaySchedulesCount);

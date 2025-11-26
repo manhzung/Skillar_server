@@ -76,6 +76,10 @@ const assignmentSchema = mongoose.Schema(
           required: true,
           trim: true,
         },
+        requirement: {
+          type: String,
+          trim: true,
+        },
       },
     ],
     tasks: [assignmentDetailSchema],

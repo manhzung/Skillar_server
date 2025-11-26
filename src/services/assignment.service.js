@@ -82,6 +82,24 @@ const queryAssignments = async (filter, options) => {
   }
   
   const assignments = await Assignment.paginate(filter, options);
+  
+  // Populate scheduleId to get student information
+  await Assignment.populate(assignments.results, {
+    path: 'scheduleId',
+    select: 'studentId',
+    populate: {
+      path: 'studentId',
+      select: 'name',
+    },
+  });
+  
+  // Add studentName field to each assignment
+  assignments.results = assignments.results.map((assignment) => {
+    const assignmentObj = assignment.toObject();
+    assignmentObj.studentName = assignmentObj.scheduleId?.studentId?.name || null;
+    return assignmentObj;
+  });
+  
   return assignments;
 };
 

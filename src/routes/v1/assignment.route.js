@@ -75,6 +75,9 @@ router
  *                     url:
  *                       type: string
  *                       example: "https://example.com/slides.pdf"
+ *                     requirement:
+ *                       type: string
+ *                       example: "Must read before class"
  *               tasks:
  *                 type: array
  *                 items:
@@ -139,6 +142,8 @@ router
  *                       name:
  *                         type: string
  *                       url:
+ *                         type: string
+ *                       requirement:
  *                         type: string
  *                 tasks:
  *                   type: array
@@ -258,6 +263,9 @@ router
  *                         type: string
  *                       scheduleId:
  *                         type: string
+ *                       studentName:
+ *                         type: string
+ *                         description: Name of the student from the associated schedule
  *                       name:
  *                         type: string
  *                       description:
@@ -274,6 +282,8 @@ router
  *                             name:
  *                               type: string
  *                             url:
+ *                               type: string
+ *                             requirement:
  *                               type: string
  *                       tasks:
  *                         type: array
@@ -455,6 +465,8 @@ router
  *                         type: string
  *                       url:
  *                         type: string
+ *                       requirement:
+ *                         type: string
  *                 tasks:
  *                   type: array
  *                   items:
@@ -525,6 +537,8 @@ router
  *                       type: string
  *                     url:
  *                       type: string
+ *                     requirement:
+ *                       type: string
  *               tasks:
  *                 type: array
  *                 items:
@@ -577,6 +591,8 @@ router
  *                       name:
  *                         type: string
  *                       url:
+ *                         type: string
+ *                       requirement:
  *                         type: string
  *                 tasks:
  *                   type: array

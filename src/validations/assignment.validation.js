@@ -22,6 +22,7 @@ const createAssignment = {
       Joi.object().keys({
         name: Joi.string().required(),
         url: Joi.string().required(),
+        requirement: Joi.string(),
       })
     ),
     tasks: Joi.array().items(taskSchema),
@@ -68,6 +69,7 @@ const updateAssignment = {
         Joi.object().keys({
           name: Joi.string().required(),
           url: Joi.string().required(),
+          requirement: Joi.string(),
         })
       ),
       tasks: Joi.array().items(taskSchema),

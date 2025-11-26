@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const bcrypt = require('bcryptjs');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { USER_ROLES } = require('../constants');
@@ -60,6 +61,11 @@ const getUserByEmail = async (email) => {
 const updateUserById = async (userId, updateBody) => {
   if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
+  }
+  
+  // Hash password if it's being updated
+  if (updateBody.password) {
+    updateBody.password = await bcrypt.hash(updateBody.password, 8);
   }
   
   const user = await User.findByIdAndUpdate(userId, updateBody, {

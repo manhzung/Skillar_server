@@ -1,3 +1,6 @@
+// Set timezone to Asia/Ho_Chi_Minh (UTC+7)
+process.env.TZ = 'Asia/Ho_Chi_Minh';
+
 const mongoose = require('mongoose');
 const app = require('./app');
 const config = require('./config/config');
