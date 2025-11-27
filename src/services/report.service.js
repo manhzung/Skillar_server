@@ -21,8 +21,16 @@ const generateReportForSchedule = async (scheduleId) => {
   // Fetch all assignments for this schedule
   const assignments = await Assignment.find({ scheduleId }).lean();
 
-  // Fetch review for this schedule
-  const review = await Review.findOne({ scheduleId }).lean();
+  // Fetch all reviews for assignments in this schedule
+  // Note: Review model mới chỉ có assignmentID, không có scheduleId
+  const assignmentIds = assignments.map(a => a._id);
+  const reviews = await Review.find({ assignmentID: { $in: assignmentIds } }).lean();
+  
+  // Create a map of assignmentID -> review for easy lookup
+  const reviewMap = {};
+  reviews.forEach(review => {
+    reviewMap[review.assignmentID.toString()] = review;
+  });
 
   // Prepare report data
   const reportData = {
@@ -52,28 +60,42 @@ const generateReportForSchedule = async (scheduleId) => {
       })),
       
       // Detailed checklist - grouped by assignments and their tasks
-      assignments: assignments.map(assignment => ({
-        assignmentName: assignment.name,
-        tasks: assignment.tasks.map(task => ({
-          name: task.name,
-          estimatedTime: task.estimatedTime,
-          actualTime: task.actualTime || 0,
-          status: task.status,
-          description: task.description || 'N/A',
-        })),
-      })),
+      assignments: assignments.map(assignment => {
+        const assignmentReview = reviewMap[assignment._id.toString()];
+        
+        return {
+          assignmentName: assignment.name,
+          tasks: assignment.tasks.map(task => {
+            // Tìm grade cho task này từ assignmentGrades nếu có
+            const taskGrade = assignmentReview?.assignmentGrades?.find(
+              grade => grade.taskId.toString() === task._id.toString()
+            );
+            
+            return {
+              name: task.name,
+              estimatedTime: task.estimatedTime,
+              actualTime: task.actualTime || 0,
+              status: task.status,
+              description: task.description || 'N/A',
+              note: task.note || 'N/A', // Thêm field note mới
+              result: taskGrade?.result, // Kết quả đánh giá từ Review
+              gradeComment: taskGrade?.comment || 'N/A', // Comment cho task từ Review
+            };
+          }),
+        };
+      }),
     },
     
-    // Evaluation criteria - lấy từ review.reviews (reviewItemSchema)
-    criteria: review && review.reviews ? review.reviews.map(item => ({
+    // Evaluation criteria - lấy từ schedule.reviews (đã chuyển sang Schedule model)
+    criteria: schedule.reviews && schedule.reviews.length > 0 ? schedule.reviews.map(item => ({
       metric: item.name,
       description: '', // reviewItemSchema không có description
       rating: item.rating,
       note: item.comment || 'N/A',
     })) : [],
     
-    // General comment - lấy từ review.overallRating
-    generalComment: review?.overallRating || 'N/A',
+    // General comment - lấy từ schedule.overallRating (đã chuyển sang Schedule model)
+    generalComment: schedule.overallRating || 'N/A',
   };
 
   // Generate HTML
