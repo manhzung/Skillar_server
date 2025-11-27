@@ -22,9 +22,9 @@ const assignmentReviewSchema = mongoose.Schema(
 
 const reviewSchema = mongoose.Schema(
   {
-    scheduleId: {
+    assignmentID: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'Schedule',
+      ref: 'Assignment',
       required: true,
     },
     assignmentGrades: [assignmentReviewSchema],

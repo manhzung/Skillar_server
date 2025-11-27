@@ -58,24 +58,54 @@ const generateMeetingUrl = (options = {}) => {
  * @param {string} options.roomName - Room name
  * @param {string} options.displayName - Participant display name
  * @param {string} options.subject - Meeting subject/title
+ * @param {boolean} options.requireModerator - Whether to require moderator (default: false)
+ * @param {boolean} options.startWithAudioMuted - Start with audio muted (default: false)
+ * @param {boolean} options.startWithVideoMuted - Start with video muted (default: false)
  * @returns {string} - Jitsi meeting URL with config
  */
 const generateMeetingUrlWithConfig = (options = {}) => {
-  const { displayName, subject } = options;
+  const { displayName, subject, requireModerator = false, startWithAudioMuted = false, startWithVideoMuted = false } = options;
   const baseUrl = generateMeetingUrl(options);
   
-  const params = new URLSearchParams();
+  const configParams = [];
   
+  // Config to disable moderator requirement and lobby
+  if (!requireModerator) {
+    configParams.push('config.startWithAudioMuted=false');
+    configParams.push('config.startWithVideoMuted=false');
+    configParams.push('config.prejoinPageEnabled=false'); // Skip pre-join page
+    configParams.push('config.requireDisplayName=false');
+    configParams.push('config.enableWelcomePage=false');
+  }
+  
+  // User preferences
+  if (startWithAudioMuted) {
+    configParams.push('config.startWithAudioMuted=true');
+  }
+  
+  if (startWithVideoMuted) {
+    configParams.push('config.startWithVideoMuted=true');
+  }
+  
+  // Interface config - disable lobby/waiting room
+  const interfaceParams = [];
+  interfaceParams.push('interfaceConfig.SHOW_JITSI_WATERMARK=false');
+  interfaceParams.push('interfaceConfig.SHOW_WATERMARK_FOR_GUESTS=false');
+  
+  // User info
+  const userParams = [];
   if (displayName) {
-    params.append('displayName', displayName);
+    userParams.push(`userInfo.displayName=${encodeURIComponent(displayName)}`);
   }
   
   if (subject) {
-    params.append('subject', subject);
+    configParams.push(`config.subject=${encodeURIComponent(subject)}`);
   }
   
-  const queryString = params.toString();
-  return queryString ? `${baseUrl}#config.${queryString}` : baseUrl;
+  // Combine all params
+  const allParams = [...configParams, ...interfaceParams, ...userParams];
+  
+  return allParams.length > 0 ? `${baseUrl}#${allParams.join('&')}` : baseUrl;
 };
 
 module.exports = {

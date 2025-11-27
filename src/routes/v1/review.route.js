@@ -33,11 +33,11 @@ router
  *           schema:
  *             type: object
  *             required:
- *               - scheduleId
+ *               - assignmentID
  *             properties:
- *               scheduleId:
+ *               assignmentID:
  *                 type: string
- *                 description: Schedule ID
+ *                 description: Assignment ID
  *                 example: "507f1f77bcf86cd799439011"
  *               assignmentGrades:
  *                 type: array
@@ -68,7 +68,7 @@ router
  *               properties:
  *                 id:
  *                   type: string
- *                 scheduleId:
+ *                 assignmentID:
  *                   type: string
  *                 assignmentGrades:
  *                   type: array
@@ -102,10 +102,10 @@ router
  *       - bearerAuth: []
  *     parameters:
  *       - in: query
- *         name: scheduleId
+ *         name: assignmentID
  *         schema:
  *           type: string
- *         description: Filter by schedule ID
+ *         description: Filter by assignment ID
  *       - in: query
  *         name: studentId
  *         schema:
@@ -148,7 +148,7 @@ router
  *                     properties:
  *                       id:
  *                         type: string
- *                       scheduleId:
+ *                       assignmentID:
  *                         type: string
  *                       assignmentGrades:
  *                         type: array
@@ -205,7 +205,7 @@ router
  *               properties:
  *                 id:
  *                   type: string
- *                 scheduleId:
+ *                 assignmentID:
  *                   type: string
  *                 assignmentGrades:
  *                   type: array
@@ -272,7 +272,7 @@ router
  *               properties:
  *                 id:
  *                   type: string
- *                 scheduleId:
+ *                 assignmentID:
  *                   type: string
  *                 assignmentGrades:
  *                   type: array
@@ -325,4 +325,3 @@ router
  */
 
 module.exports = router;
-

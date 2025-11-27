@@ -9,14 +9,14 @@ const assignmentGradeSchema = Joi.object().keys({
 
 const createReview = {
   body: Joi.object().keys({
-    scheduleId: Joi.string().custom(objectId).required(),
+    assignmentID: Joi.string().custom(objectId).required(),
     assignmentGrades: Joi.array().items(assignmentGradeSchema),
   }),
 };
 
 const getReviews = {
   query: Joi.object().keys({
-    scheduleId: Joi.string().custom(objectId),
+    assignmentID: Joi.string().custom(objectId),
     studentId: Joi.string().custom(objectId),
     tutorId: Joi.string().custom(objectId),
     sortBy: Joi.string(),

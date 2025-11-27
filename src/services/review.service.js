@@ -9,16 +9,16 @@ const { USER_SELECT_FIELDS } = require('../constants');
  * @returns {Promise<Review>}
  */
 const createReview = async (reviewBody) => {
-  // Verify schedule exists
-  const schedule = await Schedule.findById(reviewBody.scheduleId);
-  if (!schedule) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
+  // Verify assignment exists
+  const assignment = await require('../models/assignment.model').findById(reviewBody.assignmentID);
+  if (!assignment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
   }
 
-  // Check if review already exists for this schedule
-  const existingReview = await Review.findOne({ scheduleId: reviewBody.scheduleId });
+  // Check if review already exists for this assignment
+  const existingReview = await Review.findOne({ assignmentID: reviewBody.assignmentID });
   if (existingReview) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Review already exists for this schedule');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Review already exists for this assignment');
   }
 
   const review = await Review.create(reviewBody);
@@ -32,22 +32,33 @@ const createReview = async (reviewBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryReviews = async (filter, options) => {
-  // If studentId is provided, filter through schedule
-  if (filter.studentId) {
-    // Find all schedules matching the studentId
-    const schedules = await Schedule.find({ studentId: filter.studentId }).select('_id');
+  // If studentId or tutorId is provided, filter through assignment -> schedule
+  if (filter.studentId || filter.tutorId) {
+    // Build schedule filter
+    const scheduleFilter = {};
+    if (filter.studentId) scheduleFilter.studentId = filter.studentId;
+    if (filter.tutorId) scheduleFilter.tutorId = filter.tutorId;
+    
+    // Find all schedules matching the filter
+    const schedules = await Schedule.find(scheduleFilter).select('_id');
     const scheduleIds = schedules.map((schedule) => schedule._id);
     
-    // Filter reviews by scheduleIds
-    if (scheduleIds.length > 0) {
-      filter.scheduleId = { $in: scheduleIds };
+    // Find all assignments for those schedules
+    const Assignment = require('../models/assignment.model');
+    const assignments = await Assignment.find({ scheduleId: { $in: scheduleIds } }).select('_id');
+    const assignmentIds = assignments.map((assignment) => assignment._id);
+    
+    // Filter reviews by assignmentIds
+    if (assignmentIds.length > 0) {
+      filter.assignmentID = { $in: assignmentIds };
     } else {
-      // If no schedules found, return empty result
-      filter.scheduleId = { $in: [] };
+      // If no assignments found, return empty result
+      filter.assignmentID = { $in: [] };
     }
     
-    // Remove studentId from filter as it's not a direct field in Review
+    // Remove studentId and tutorId from filter as they're not direct fields in Review
     delete filter.studentId;
+    delete filter.tutorId;
   }
   
   const reviews = await Review.paginate(filter, options);
@@ -62,15 +73,20 @@ const queryReviews = async (filter, options) => {
 const getReviewById = async (id) => {
   const review = await Review.findById(id)
     .populate({
-      path: 'scheduleId',
+      path: 'assignmentID',
       populate: [
         {
-          path: 'studentId',
-          select: USER_SELECT_FIELDS,
-        },
-        {
-          path: 'tutorId',
-          select: USER_SELECT_FIELDS,
+          path: 'scheduleId',
+          populate: [
+            {
+              path: 'studentId',
+              select: USER_SELECT_FIELDS,
+            },
+            {
+              path: 'tutorId',
+              select: USER_SELECT_FIELDS,
+            },
+          ],
         },
       ],
     });
@@ -83,22 +99,27 @@ const getReviewById = async (id) => {
 };
 
 /**
- * Get review by schedule id
- * @param {ObjectId} scheduleId
+ * Get review by assignment id
+ * @param {ObjectId} assignmentID
  * @returns {Promise<Review>}
  */
-const getReviewByScheduleId = async (scheduleId) => {
-  return Review.findOne({ scheduleId })
+const getReviewByAssignmentId = async (assignmentID) => {
+  return Review.findOne({ assignmentID })
     .populate({
-      path: 'scheduleId',
+      path: 'assignmentID',
       populate: [
         {
-          path: 'studentId',
-          select: USER_SELECT_FIELDS,
-        },
-        {
-          path: 'tutorId',
-          select: USER_SELECT_FIELDS,
+          path: 'scheduleId',
+          populate: [
+            {
+              path: 'studentId',
+              select: USER_SELECT_FIELDS,
+            },
+            {
+              path: 'tutorId',
+              select: USER_SELECT_FIELDS,
+            },
+          ],
         },
       ],
     });
@@ -116,15 +137,20 @@ const updateReviewById = async (reviewId, updateBody) => {
     runValidators: true,
   })
     .populate({
-      path: 'scheduleId',
+      path: 'assignmentID',
       populate: [
         {
-          path: 'studentId',
-          select: USER_SELECT_FIELDS,
-        },
-        {
-          path: 'tutorId',
-          select: USER_SELECT_FIELDS,
+          path: 'scheduleId',
+          populate: [
+            {
+              path: 'studentId',
+              select: USER_SELECT_FIELDS,
+            },
+            {
+              path: 'tutorId',
+              select: USER_SELECT_FIELDS,
+            },
+          ],
         },
       ],
     });
@@ -153,7 +179,7 @@ module.exports = {
   createReview,
   queryReviews,
   getReviewById,
-  getReviewByScheduleId,
+  getReviewByAssignmentId,
   updateReviewById,
   deleteReviewById,
 };

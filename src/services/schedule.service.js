@@ -2,7 +2,7 @@ const moment = require('moment-timezone');
 const httpStatus = require('http-status');
 const { Schedule, Assignment, Homework } = require('../models');
 const ApiError = require('../utils/ApiError');
-const { generateMeetingUrl } = require('../utils/jitsi');
+const { generateMeetingUrl, generateMeetingUrlWithConfig } = require('../utils/jitsi');
 const { USER_SELECT_FIELDS, USER_ROLES, SCHEDULE_STATUS } = require('../constants');
 
 /**
@@ -13,9 +13,10 @@ const { USER_SELECT_FIELDS, USER_ROLES, SCHEDULE_STATUS } = require('../constant
 const createSchedule = async (scheduleBody) => {
   // Auto-generate Jitsi meeting URL if not provided
   if (!scheduleBody.meetingURL) {
-    scheduleBody.meetingURL = generateMeetingUrl({
+    scheduleBody.meetingURL = generateMeetingUrlWithConfig({
       date: scheduleBody.startTime,
       prefix: 'skillar-lesson',
+      requireModerator: false, // Không yêu cầu moderator phải vào trước
     });
   }
   
@@ -206,11 +207,12 @@ const getSchedulesPerMonth = async (months = 6) => {
  */
 const generateMeetingLink = async (options = {}) => {
   // Generate new Jitsi meeting URL
-  const newMeetingURL = generateMeetingUrl({
+  const newMeetingURL = generateMeetingUrlWithConfig({
     scheduleId: options.scheduleId,
     date: options.date || new Date(),
     prefix: 'skillar-lesson',
     roomName: options.roomName,
+    requireModerator: false, // Không yêu cầu moderator phải vào trước
   });
   
   return { meetingURL: newMeetingURL };
