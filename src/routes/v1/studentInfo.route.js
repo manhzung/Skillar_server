@@ -9,7 +9,7 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .post(auth(['admin']), validate(studentInfoValidation.createStudentInfo), studentInfoController.createStudentInfo)
-  .get(auth(['admin', 'student', 'parent']), validate(studentInfoValidation.getStudentInfo), studentInfoController.getStudentInfo)
+  .get(auth(['admin','tutor', 'student', 'parent']), validate(studentInfoValidation.getStudentInfo), studentInfoController.getStudentInfo)
   .patch(auth(['admin']), validate(studentInfoValidation.updateStudentInfo), studentInfoController.updateStudentInfo)
   .delete(auth(['admin']), validate(studentInfoValidation.deleteStudentInfo), studentInfoController.deleteStudentInfo);
 
