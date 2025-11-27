@@ -189,9 +189,9 @@ const submitAssignmentTask = async (assignmentId, taskId, submitData) => {
 
   Object.assign(task, submitData);
   
-  // Auto-update status to 'completed' when answerURL is provided
+  // Auto-update status to 'submitted' when answerURL is provided
   if (submitData.answerURL && submitData.answerURL.trim() !== '') {
-    task.status = 'completed';
+    task.status = 'submitted';
   }
   
   await assignment.save();
@@ -234,7 +234,7 @@ const getTodayAssignmentsStats = async () => {
   const assignmentsWithStats = todayAssignments.map((assignment) => {
     const totalTasks = assignment.tasks ? assignment.tasks.length : 0;
     const completedTasks = assignment.tasks
-      ? assignment.tasks.filter((task) => ['completed', 'submitted', 'graded'].includes(task.status)).length
+      ? assignment.tasks.filter((task) => ['submitted'].includes(task.status)).length
       : 0;
     const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 

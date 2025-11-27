@@ -114,7 +114,7 @@ router
  *                       example: "https://example.com/student-answer.pdf"
  *                     status:
  *                       type: string
- *                       enum: [pending, in-progress, completed, submitted, graded]
+ *                       enum: [pending, in-progress, submitted, graded]
  *                       default: pending
  *                     description:
  *                       type: string
@@ -588,7 +588,7 @@ router
  *                       description: Student's answer/solution file URL
  *                     status:
  *                       type: string
- *                       enum: [pending, in-progress, completed, submitted, graded]
+ *                       enum: [pending, in-progress, submitted, graded]
  *                     description:
  *                       type: string
  *                     note:

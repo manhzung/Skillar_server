@@ -29,7 +29,7 @@ const assignmentDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'in-progress', 'completed', 'submitted', 'undone'],
+      enum: ['pending', 'in-progress', 'submitted', 'undone'],
       default: 'pending',
     },
     description: {
@@ -101,11 +101,11 @@ const assignmentSchema = mongoose.Schema(
 assignmentSchema.pre('save', function (next) {
   // Only update status if there are tasks
   if (this.tasks && this.tasks.length > 0) {
-    const allCompleted = this.tasks.every((task) => task.status === 'completed');
+    const allSubmitted = this.tasks.every((task) => task.status === 'submitted');
     const anyInProgress = this.tasks.some((task) => task.status === 'in-progress');
     
-    if (allCompleted) {
-      // All tasks completed -> assignment completed
+    if (allSubmitted) {
+      // All tasks submitted -> assignment completed
       this.status = 'completed';
     } else if (anyInProgress) {
       // At least one task in progress -> assignment in progress

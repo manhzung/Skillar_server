@@ -8,7 +8,7 @@ const taskSchema = Joi.object().keys({
   assignmentUrl: Joi.string(),
   solutionUrl: Joi.string(),
   answerURL: Joi.string().uri(),
-  status: Joi.string().valid('pending', 'in-progress', 'completed', 'submitted', 'undone'),
+  status: Joi.string().valid('pending', 'in-progress', 'submitted', 'undone'),
   description: Joi.string(),
   note: Joi.string(),
 });
