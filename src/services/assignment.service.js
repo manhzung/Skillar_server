@@ -188,6 +188,12 @@ const submitAssignmentTask = async (assignmentId, taskId, submitData) => {
   }
 
   Object.assign(task, submitData);
+  
+  // Auto-update status to 'completed' when answerURL is provided
+  if (submitData.answerURL && submitData.answerURL.trim() !== '') {
+    task.status = 'completed';
+  }
+  
   await assignment.save();
   
   return getAssignmentById(assignmentId);

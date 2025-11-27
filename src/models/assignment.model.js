@@ -29,7 +29,7 @@ const assignmentDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'in-progress', 'completed', 'submitted', 'graded'],
+      enum: ['pending', 'in-progress', 'completed', 'submitted', 'undone'],
       default: 'pending',
     },
     description: {
@@ -96,6 +96,26 @@ const assignmentSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Pre-save middleware to auto-update assignment status based on tasks
+assignmentSchema.pre('save', function (next) {
+  // Only update status if there are tasks
+  if (this.tasks && this.tasks.length > 0) {
+    const allCompleted = this.tasks.every((task) => task.status === 'completed');
+    const anyInProgress = this.tasks.some((task) => task.status === 'in-progress');
+    
+    if (allCompleted) {
+      // All tasks completed -> assignment completed
+      this.status = 'completed';
+    } else if (anyInProgress) {
+      // At least one task in progress -> assignment in progress
+      this.status = 'in-progress';
+    }
+    // If all tasks are pending/undone, keep status as is (usually 'pending')
+  }
+  
+  next();
+});
 
 // add plugin that converts mongoose to json
 assignmentSchema.plugin(toJSON);

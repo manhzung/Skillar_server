@@ -22,8 +22,8 @@ const homeworkDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'submitted', 'graded'],
-      default: 'pending',
+      enum: ['in-progress', 'submitted', 'undone'],
+      default: 'in-progress',
     },
     description: {
       type: String,
@@ -67,12 +67,39 @@ const homeworkSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ['in-progress', 'completed', 'undone'],
+      default: 'in-progress',
+    },
     tasks: [homeworkDetailSchema],
   },
   {
     timestamps: true,
   }
 );
+
+// Pre-save middleware to auto-update homework status based on tasks
+homeworkSchema.pre('save', function (next) {
+  // Only update status if there are tasks
+  if (this.tasks && this.tasks.length > 0) {
+    const allSubmitted = this.tasks.every((task) => task.status === 'submitted');
+    const anyUndone = this.tasks.some((task) => task.status === 'undone');
+    
+    if (allSubmitted) {
+      // All tasks submitted → homework completed
+      this.status = 'completed';
+    } else if (anyUndone) {
+      // At least one task undone → homework undone
+      this.status = 'undone';
+    } else {
+      // Otherwise → in progress
+      this.status = 'in-progress';
+    }
+  }
+  
+  next();
+});
 
 // add plugin that converts mongoose to json
 homeworkSchema.plugin(toJSON);

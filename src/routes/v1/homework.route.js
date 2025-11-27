@@ -67,6 +67,11 @@ router
  *               subject:
  *                 type: string
  *                 example: "Mathematics"
+ *               status:
+ *                 type: string
+ *                 enum: [pending, in-progress, completed]
+ *                 default: pending
+ *                 description: Overall homework status (auto-updated based on tasks completion)
  *               tasks:
  *                 type: array
  *                 items:
@@ -92,8 +97,9 @@ router
  *                       example: "https://example.com/student-answer.pdf"
  *                     status:
  *                       type: string
- *                       enum: [pending, submitted, graded]
+ *                       enum: [pending, submitted, undone]
  *                       default: pending
+ *                       description: Task status (auto-updated to 'submitted' when answerURL provided)
  *                     description:
  *                       type: string
  *                       example: "Solve quadratic equations"
@@ -180,8 +186,8 @@ router
  *         name: status
  *         schema:
  *           type: string
- *           enum: [pending, submitted, graded]
- *         description: Filter by task status
+ *           enum: [pending, in-progress, completed]
+ *         description: Filter by homework status
  *       - in: query
  *         name: difficulty
  *         schema:
@@ -235,6 +241,9 @@ router
  *                         type: string
  *                       subject:
  *                         type: string
+ *                       status:
+ *                         type: string
+ *                         enum: [pending, in-progress, completed]
  *                       tasks:
  *                         type: array
  *                         items:
@@ -252,6 +261,7 @@ router
  *                               type: string
  *                             status:
  *                               type: string
+ *                               enum: [pending, submitted, undone]
  *                             description:
  *                               type: string
  *                       createdAt:
@@ -375,6 +385,10 @@ router
  *                 enum: [easy, medium, hard, advanced]
  *               subject:
  *                 type: string
+ *               status:
+ *                 type: string
+ *                 enum: [pending, in-progress, completed]
+ *                 description: Overall homework status
  *               tasks:
  *                 type: array
  *                 items:
@@ -393,7 +407,7 @@ router
  *                       format: uri
  *                     status:
  *                       type: string
- *                       enum: [pending, submitted, graded]
+ *                       enum: [pending, submitted, undone]
  *                     description:
  *                       type: string
  *     responses:
