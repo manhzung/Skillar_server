@@ -31,6 +31,12 @@ const getReview = {
   }),
 };
 
+const getReviewByAssignmentId = {
+  params: Joi.object().keys({
+    assignmentID: Joi.string().custom(objectId).required(),
+  }),
+};
+
 const updateReview = {
   params: Joi.object().keys({
     reviewId: Joi.string().custom(objectId).required(),
@@ -52,6 +58,7 @@ module.exports = {
   createReview,
   getReviews,
   getReview,
+  getReviewByAssignmentId,
   updateReview,
   deleteReview,
 };

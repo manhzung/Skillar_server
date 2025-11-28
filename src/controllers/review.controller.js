@@ -21,6 +21,14 @@ const getReview = catchAsync(async (req, res) => {
   res.send(review);
 });
 
+const getReviewByAssignmentId = catchAsync(async (req, res) => {
+  const review = await reviewService.getReviewByAssignmentId(req.params.assignmentID);
+  if (!review) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Review not found');
+  }
+  res.send(review);
+});
+
 const updateReview = catchAsync(async (req, res) => {
   const review = await reviewService.updateReviewById(req.params.reviewId, req.body);
   res.send(review);
@@ -35,6 +43,7 @@ module.exports = {
   createReview,
   getReviews,
   getReview,
+  getReviewByAssignmentId,
   updateReview,
   deleteReview,
 };

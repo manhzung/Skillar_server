@@ -12,6 +12,10 @@ router
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(reviewValidation.getReviews), reviewController.getReviews);
 
 router
+  .route('/assignment/:assignmentID')
+  .get(auth(['admin', 'student', 'parent', 'tutor']), validate(reviewValidation.getReviewByAssignmentId), reviewController.getReviewByAssignmentId);
+
+router
   .route('/:reviewId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(reviewValidation.getReview), reviewController.getReview)
   .patch(auth(['tutor','admin']), validate(reviewValidation.updateReview), reviewController.updateReview)
@@ -177,6 +181,57 @@ router
  *                   type: integer
  *       "401":
  *         description: Unauthorized
+ */
+
+/**
+ * @swagger
+ * /reviews/assignment/{assignmentID}:
+ *   get:
+ *     summary: Get a review by assignment ID
+ *     description: Logged in users can fetch review information by assignment ID
+ *     tags: [Reviews]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: assignmentID
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Assignment ID
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 assignmentID:
+ *                   type: string
+ *                 assignmentGrades:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       taskId:
+ *                         type: string
+ *                       result:
+ *                         type: number
+ *                       comment:
+ *                         type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       "401":
+ *         description: Unauthorized
+ *       "404":
+ *         description: Not Found
  */
 
 /**
