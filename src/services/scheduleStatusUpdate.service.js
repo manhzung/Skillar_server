@@ -2,6 +2,7 @@ const moment = require('moment-timezone');
 const { Schedule, Assignment } = require('../models');
 const { SCHEDULE_STATUS } = require('../constants');
 const logger = require('../config/logger');
+const reportService = require('./report.service');
 
 const TASK_STATUS = {
   PENDING: 'pending',
@@ -105,6 +106,16 @@ const updateScheduleStatusToCompleted = async () => {
       { _id: { $in: scheduleIds } },
       { $set: { status: SCHEDULE_STATUS.COMPLETED } }
     );
+    
+    // Auto generate report for completed schedules
+    for (const scheduleId of scheduleIds) {
+      try {
+        await reportService.generateReportForSchedule(scheduleId);
+        logger.info(`Auto-generated report for schedule ${scheduleId}`);
+      } catch (error) {
+        logger.error(`Failed to auto-generate report for schedule ${scheduleId}:`, error);
+      }
+    }
     
     // Update assignment tasks to 'undone' if no answerURL
     const assignments = await Assignment.find({
