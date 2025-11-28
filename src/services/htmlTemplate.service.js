@@ -9,12 +9,14 @@ const generateReportHTML = (reportData) => {
   // Helper to generate star rating HTML
   const generateStars = (rating) => {
     let stars = '';
+    const starSvg = (filled) => `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="star-icon ${filled ? 'filled' : ''}">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+    `;
+
     for (let i = 1; i <= 5; i++) {
-      if (i <= rating) {
-        stars += '<span class="star filled">★</span>';
-      } else {
-        stars += '<span class="star">☆</span>';
-      }
+      stars += starSvg(i <= rating);
     }
     return stars;
   };
@@ -287,13 +289,16 @@ const generateReportHTML = (reportData) => {
       gap: 2px;
     }
     
-    .star {
-      font-size: 16px;
+    .star-icon {
+      width: 16px;
+      height: 16px;
       color: #d1d5db;
     }
     
-    .star.filled {
+    .star-icon.filled {
       color: #fbbf24;
+      fill: #fbbf24;
+      stroke: #fbbf24;
     }
     
     .rating-value {
@@ -501,7 +506,7 @@ const generateReportHTML = (reportData) => {
       ` : ''}
       
       <div class="footer">
-        Báo cáo được tạo tự động bởi hệ thống LearnerPro vào ${new Date().toLocaleString('vi-VN')}
+        Báo cáo được tạo tự động bởi hệ thống Skillar vào ${new Date().toLocaleString('vi-VN')}
       </div>
     </div>
   </div>
