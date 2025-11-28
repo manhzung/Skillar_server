@@ -11,6 +11,7 @@ const createReview = {
   body: Joi.object().keys({
     assignmentID: Joi.string().custom(objectId).required(),
     assignmentGrades: Joi.array().items(assignmentGradeSchema),
+    comment: Joi.string(),
   }),
 };
 
@@ -44,6 +45,7 @@ const updateReview = {
   body: Joi.object()
     .keys({
       assignmentGrades: Joi.array().items(assignmentGradeSchema),
+      comment: Joi.string(),
     })
     .min(1),
 };

@@ -62,6 +62,10 @@ router
  *                     comment:
  *                       type: string
  *                       example: "Well done, minor mistakes"
+ *               comment:
+ *                 type: string
+ *                 description: Overall review comment
+ *                 example: "Good progress overall"
  *     responses:
  *       "201":
  *         description: Created
@@ -85,6 +89,8 @@ router
  *                         type: number
  *                       comment:
  *                         type: string
+ *                 comment:
+ *                   type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -165,6 +171,8 @@ router
  *                               type: number
  *                             comment:
  *                               type: string
+ *                       comment:
+ *                         type: string
  *                       createdAt:
  *                         type: string
  *                         format: date-time
@@ -222,6 +230,8 @@ router
  *                         type: number
  *                       comment:
  *                         type: string
+ *                 comment:
+ *                   type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -273,6 +283,8 @@ router
  *                         type: number
  *                       comment:
  *                         type: string
+ *                 comment:
+ *                   type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time
@@ -317,6 +329,9 @@ router
  *                       maximum: 100
  *                     comment:
  *                       type: string
+ *               comment:
+ *                 type: string
+ *                 description: Overall review comment
  *     responses:
  *       "200":
  *         description: OK
@@ -340,6 +355,8 @@ router
  *                         type: number
  *                       comment:
  *                         type: string
+ *                 comment:
+ *                   type: string
  *                 createdAt:
  *                   type: string
  *                   format: date-time

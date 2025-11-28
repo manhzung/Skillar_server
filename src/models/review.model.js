@@ -28,6 +28,10 @@ const reviewSchema = mongoose.Schema(
       required: true,
     },
     assignmentGrades: [assignmentReviewSchema],
+    comment: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,
