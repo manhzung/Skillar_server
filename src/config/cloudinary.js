@@ -43,6 +43,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
+    console.log('Blocked file upload. Mimetype:', file.mimetype, 'Original name:', file.originalname);
     cb(new Error('An unknown file format not allowed'), false);
   }
 };
