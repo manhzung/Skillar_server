@@ -15,11 +15,11 @@ router
   .route('/:homeworkId')
   .get(auth(['admin', 'student', 'tutor']), validate(homeworkValidation.getHomework), homeworkController.getHomework)
   .patch(auth(['admin', 'tutor']), validate(homeworkValidation.updateHomework), homeworkController.updateHomework)
-  .delete(auth(['admin']), validate(homeworkValidation.deleteHomework), homeworkController.deleteHomework);
+  .delete(auth(['admin', 'tutor']), validate(homeworkValidation.deleteHomework), homeworkController.deleteHomework);
 
 router
   .route('/:homeworkId/tasks/:taskId/submit')
-  .patch(auth(['student','admin']), validate(homeworkValidation.submitTask), homeworkController.submitTask);
+  .patch(auth(['student','tutor','admin']), validate(homeworkValidation.submitTask), homeworkController.submitTask);
 
 /**
  * @swagger

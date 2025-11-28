@@ -15,7 +15,7 @@ router
   .route('/:homeworkReviewId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(homeworkReviewValidation.getHomeworkReview), homeworkReviewController.getHomeworkReview)
   .patch(auth(['tutor', 'admin']), validate(homeworkReviewValidation.updateHomeworkReview), homeworkReviewController.updateHomeworkReview)
-  .delete(auth(['admin']), validate(homeworkReviewValidation.deleteHomeworkReview), homeworkReviewController.deleteHomeworkReview);
+  .delete(auth(['admin', 'tutor']), validate(homeworkReviewValidation.deleteHomeworkReview), homeworkReviewController.deleteHomeworkReview);
 
 /**
  * @swagger
