@@ -7,8 +7,14 @@ const ApiError = require('../utils/ApiError');
 const errorConverter = (err, req, res, next) => {
   let error = err;
   if (!(error instanceof ApiError)) {
-    const statusCode =
+    let statusCode =
       error.statusCode || error instanceof mongoose.Error ? httpStatus.BAD_REQUEST : httpStatus.INTERNAL_SERVER_ERROR;
+    
+    // Handle Multer/Cloudinary file format error
+    if (error.message === 'An unknown file format not allowed') {
+      statusCode = httpStatus.BAD_REQUEST;
+    }
+
     const message = error.message || httpStatus[statusCode];
     error = new ApiError(statusCode, message, false, err.stack);
   }
