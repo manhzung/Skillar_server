@@ -15,7 +15,7 @@ router
   .route('/:assignmentId')
   .get(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.getAssignment), assignmentController.getAssignment)
   .patch(auth(['admin', 'tutor']), validate(assignmentValidation.updateAssignment), assignmentController.updateAssignment)
-  .delete(auth(['admin']), validate(assignmentValidation.deleteAssignment), assignmentController.deleteAssignment);
+  .delete(auth(['admin', 'tutor']), validate(assignmentValidation.deleteAssignment), assignmentController.deleteAssignment);
 
 router
   .route('/:assignmentId/tasks/:taskId/submit')
