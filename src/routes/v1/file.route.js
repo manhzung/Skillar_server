@@ -17,7 +17,7 @@ router
 
 router
   .route('/:publicId')
-  .delete(auth(['admin']), validate(fileValidation.deleteFile), fileController.deleteFile);
+  .delete(auth(['admin','student', 'tutor']), validate(fileValidation.deleteFile), fileController.deleteFile);
 
 /**
  * @swagger
