@@ -2,10 +2,32 @@ const puppeteer = require('puppeteer');
 const httpStatus = require('http-status');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const { Schedule, Assignment, Review } = require('../models');
 const { cloudinary } = require('../config/cloudinary');
 const { generateReportHTML } = require('./htmlTemplate.service');
 const ApiError = require('../utils/ApiError');
+
+/**
+ * Fetch image from URL and convert to base64
+ * @param {string} imageUrl - URL of the image
+ * @returns {Promise<string>} Base64 encoded image with data URI prefix
+ */
+const fetchImageAsBase64 = async (imageUrl) => {
+  try {
+    const response = await axios.get(imageUrl, {
+      responseType: 'arraybuffer',
+      timeout: 10000, // 10 second timeout
+    });
+    
+    const base64 = Buffer.from(response.data, 'binary').toString('base64');
+    const contentType = response.headers['content-type'] || 'image/png';
+    return `data:${contentType};base64,${base64}`;
+  } catch (error) {
+    console.error('Failed to fetch image from URL:', error.message);
+    throw new Error(`Could not fetch image from ${imageUrl}`);
+  }
+};
 
 /**
  * Generate PDF report for a schedule
@@ -101,13 +123,12 @@ const generateReportForSchedule = async (scheduleId) => {
     generalComment: schedule.overallRating || 'N/A',
   };
   
-  // Convert logo to base64 for embedding in PDF
+  // Fetch logo from Cloudinary URL and convert to base64 for embedding in PDF
   try {
-    const logoPath = path.join(__dirname, '../../public/image/Skillar-logo.png');
-    const logoBuffer = fs.readFileSync(logoPath);
-    reportData.logo = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+    const logoUrl = 'https://res.cloudinary.com/dgtdarhcb/image/upload/v1764524738/skillar/ywxcvasaqw5hbldvl8pe.png';
+    reportData.logo = await fetchImageAsBase64(logoUrl);
   } catch (error) {
-    console.warn('Logo not found, PDF will be generated without logo:', error.message);
+    console.warn('Failed to fetch logo from Cloudinary, PDF will be generated without logo:', error.message);
     reportData.logo = '';
   }
 
