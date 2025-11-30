@@ -241,6 +241,35 @@ const generateReportHTML = (reportData) => {
       border-bottom: 1px solid #e5e7eb;
     }
     
+    /* Set specific column widths */
+    .detail-table th:nth-child(1),
+    .detail-table td:nth-child(1) {
+      width: 25%; /* TÊN TASK */
+    }
+    
+    .detail-table th:nth-child(2),
+    .detail-table td:nth-child(2) {
+      width: 12%; /* THỜI GIAN ƯỚC LƯỢNG */
+      white-space: nowrap;
+    }
+    
+    .detail-table th:nth-child(3),
+    .detail-table td:nth-child(3) {
+      width: 12%; /* THỜI GIAN THỰC TẾ */
+      white-space: nowrap;
+    }
+    
+    .detail-table th:nth-child(4),
+    .detail-table td:nth-child(4) {
+      width: 15%; /* KẾT QUẢ - wider to prevent badge wrapping */
+      white-space: nowrap;
+    }
+    
+    .detail-table th:nth-child(5),
+    .detail-table td:nth-child(5) {
+      width: 36%; /* MÔ TẢ */
+    }
+    
     .detail-table td {
       padding: 12px;
       border-bottom: 1px solid #f3f4f6;
