@@ -339,6 +339,29 @@ const generateReportHTML = (reportData) => {
       line-height: 1.7;
     }
     
+    .subject-evaluation {
+      margin-top: 16px;
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 16px;
+    }
+    
+    .evaluation-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #92400e;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+    
+    .evaluation-text {
+      font-size: 14px;
+      color: #78350f;
+      line-height: 1.7;
+    }
+    
     .footer {
       text-align: center;
       padding: 24px 0 0;
@@ -467,6 +490,14 @@ const generateReportHTML = (reportData) => {
             </tbody>
           </table>
           ` : '<div class="summary-text">Không có task nào.</div>'}
+          
+          <!-- Subject Evaluation from Review Comment -->
+          ${assignment.subjectComment ? `
+          <div class="subject-evaluation">
+            <div class="evaluation-title">📝 ĐÁNH GIÁ MÔN HỌC</div>
+            <div class="evaluation-text">${assignment.subjectComment}</div>
+          </div>
+          ` : ''}
         </div>
         `).join('')
       : ''}
@@ -496,7 +527,7 @@ const generateReportHTML = (reportData) => {
       ` : ''}
       
       <!-- General Comment -->
-      ${generalComment && generalComment !== 'N/A' ? `
+      ${generalComment ? `
       <div class="section">
         <div class="general-comment-box">
           <div class="general-comment-title">NHẬN XÉT CHUNG CHO MÔN HỌC TỪ TUTOR</div>

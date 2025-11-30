@@ -230,8 +230,76 @@ const updateOverdueHomeworkTasks = async () => {
   };
 };
 
+/**
+ * Auto-update assignment statuses based on task statuses
+ * - All tasks submitted → assignment completed
+ * - Any task in-progress → assignment in-progress
+ * - Otherwise → assignment pending
+ * @returns {Promise<Object>}
+ */
+const updateAssignmentStatuses = async () => {
+  const now = moment.utc().toDate();
+  
+  // Get all assignments
+  const assignments = await Assignment.find({});
+  
+  let completedCount = 0;
+  let inProgressCount = 0;
+  let pendingCount = 0;
+  
+  for (const assignment of assignments) {
+    // Only process if assignment has tasks
+    if (assignment.tasks && assignment.tasks.length > 0) {
+      const allSubmitted = assignment.tasks.every((task) => task.status === TASK_STATUS.SUBMITTED);
+      const anyInProgress = assignment.tasks.some((task) => task.status === TASK_STATUS.IN_PROGRESS);
+      
+      let newStatus = null;
+      
+      // Determine new status based on tasks
+      if (allSubmitted) {
+        newStatus = 'completed';
+        if (assignment.status !== 'completed') {
+          completedCount++;
+        }
+      } else if (anyInProgress) {
+        newStatus = 'in-progress';
+        if (assignment.status !== 'in-progress') {
+          inProgressCount++;
+        }
+      } else {
+        // All tasks are pending or undone
+        newStatus = 'pending';
+        if (assignment.status !== 'pending') {
+          pendingCount++;
+        }
+      }
+      
+      // Update if status changed
+      if (newStatus && assignment.status !== newStatus) {
+        await Assignment.findByIdAndUpdate(assignment._id, { status: newStatus });
+      }
+    }
+  }
+  
+  if (completedCount > 0 || inProgressCount > 0 || pendingCount > 0) {
+    logger.info(
+      `Updated assignment statuses: ${completedCount} to completed, ${inProgressCount} to in-progress, ${pendingCount} to pending`
+    );
+  }
+  
+  return {
+    assignments: {
+      completed: completedCount,
+      inProgress: inProgressCount,
+      pending: pendingCount,
+    },
+    timestamp: now,
+  };
+};
+
 module.exports = {
   updateScheduleStatusToOngoing,
   updateScheduleStatusToCompleted,
   updateOverdueHomeworkTasks,
+  updateAssignmentStatuses,
 };

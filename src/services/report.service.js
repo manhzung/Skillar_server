@@ -65,6 +65,7 @@ const generateReportForSchedule = async (scheduleId) => {
         
         return {
           assignmentName: assignment.name,
+          subjectComment: assignmentReview?.comment || null, // Review comment for this assignment
           tasks: assignment.tasks.map(task => {
             // Tìm grade cho task này từ assignmentGrades nếu có
             const taskGrade = assignmentReview?.assignmentGrades?.find(

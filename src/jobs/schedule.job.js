@@ -2,7 +2,8 @@ const cron = require('node-cron');
 const { 
   updateScheduleStatusToOngoing, 
   updateScheduleStatusToCompleted,
-  updateOverdueHomeworkTasks 
+  updateOverdueHomeworkTasks,
+  updateAssignmentStatuses
 } = require('../services/scheduleStatusUpdate.service');
 const logger = require('../config/logger');
 
@@ -25,11 +26,15 @@ const startScheduleStatusUpdateJob = () => {
       // Update overdue homework tasks → undone
       const homeworkResult = await updateOverdueHomeworkTasks();
       
-      if (ongoingResult.schedules.modified > 0 || completedResult.schedules.modified > 0 || homeworkResult.tasks.undone > 0) {
+      // Update assignment statuses based on tasks
+      const assignmentResult = await updateAssignmentStatuses();
+      
+      if (ongoingResult.schedules.modified > 0 || completedResult.schedules.modified > 0 || homeworkResult.tasks.undone > 0 || assignmentResult.assignments.completed > 0 || assignmentResult.assignments.inProgress > 0) {
         logger.info('Schedule status update job completed', {
           ongoing: ongoingResult,
           completed: completedResult,
           homework: homeworkResult,
+          assignment: assignmentResult,
         });
       }
     } catch (error) {
