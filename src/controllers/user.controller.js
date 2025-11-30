@@ -75,6 +75,12 @@ const getStudentsByTutor = catchAsync(async (req, res) => {
   res.send(students);
 });
 
+const getUserNamesAndIds = catchAsync(async (req, res) => {
+  const role = req.query.role;
+  const users = await userService.getUserNamesAndIds(role);
+  res.send(users);
+});
+
 module.exports = {
   createUser,
   getUsers,
@@ -86,4 +92,5 @@ module.exports = {
   getTutorsPerSubject,
   getLoggedInUserCount,
   getStudentsByTutor,
+  getUserNamesAndIds,
 };

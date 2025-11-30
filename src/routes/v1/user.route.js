@@ -32,6 +32,10 @@ router
   .get(auth(['admin', 'tutor']), userController.getStudentsByTutor);
 
 router
+  .route('/names')
+  .get(auth(['admin', 'tutor', 'student']), validate(userValidation.getUserNamesAndIds), userController.getUserNamesAndIds);
+
+router
   .route('/:userId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(userValidation.getUser), userController.getUser)
   .patch(auth(['admin']), validate(userValidation.updateUser), userController.updateUser)
@@ -228,6 +232,42 @@ router
  *                   type: integer
  *                 totalResults:
  *                   type: integer
+ *       "401":
+ *         description: Unauthorized
+ *       "403":
+ *         description: Forbidden
+ */
+
+/**
+ * @swagger
+ * /users/names:
+ *   get:
+ *     summary: Get user names and IDs
+ *     description: Get only user names and IDs with optional role filtering (tutor or student)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [tutor, student]
+ *         description: Filter by role (tutor or student). If not provided, returns all users.
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   name:
+ *                     type: string
  *       "401":
  *         description: Unauthorized
  *       "403":

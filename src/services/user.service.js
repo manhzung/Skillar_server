@@ -222,6 +222,29 @@ const getStudentsByTutorId = async (tutorId) => {
   return result;
 };
 
+/**
+ * Get user names and IDs with optional role filter
+ * @param {string} [role] - Filter by role (tutor or student)
+ * @returns {Promise<Array>}
+ */
+const getUserNamesAndIds = async (role) => {
+  const filter = {};
+  
+  // Add role filter if provided
+  if (role) {
+    filter.role = role;
+  }
+  
+  // Fetch only id and name fields
+  const users = await User.find(filter).select('_id name').lean();
+  
+  // Map to return id and name
+  return users.map((user) => ({
+    id: user._id,
+    name: user.name,
+  }));
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -234,4 +257,5 @@ module.exports = {
   getStudentsPerGrade,
   getTutorsPerSubject,
   getStudentsByTutorId,
+  getUserNamesAndIds,
 };

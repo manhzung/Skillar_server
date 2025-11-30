@@ -57,10 +57,17 @@ const deleteUser = {
   }),
 };
 
+const getUserNamesAndIds = {
+  query: Joi.object().keys({
+    role: Joi.string().valid('tutor', 'student'),
+  }),
+};
+
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
+  getUserNamesAndIds,
 };
