@@ -8,14 +8,14 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(['admin', 'tutor']), validate(homeworkValidation.createHomework), homeworkController.createHomework)
+  .post(auth(['admin', 'tutor','student']), validate(homeworkValidation.createHomework), homeworkController.createHomework)
   .get(auth(['admin', 'student', 'tutor']), validate(homeworkValidation.getHomeworks), homeworkController.getHomeworks);
 
 router
   .route('/:homeworkId')
   .get(auth(['admin', 'student', 'tutor']), validate(homeworkValidation.getHomework), homeworkController.getHomework)
-  .patch(auth(['admin', 'tutor']), validate(homeworkValidation.updateHomework), homeworkController.updateHomework)
-  .delete(auth(['admin', 'tutor']), validate(homeworkValidation.deleteHomework), homeworkController.deleteHomework);
+  .patch(auth(['admin', 'tutor','student']), validate(homeworkValidation.updateHomework), homeworkController.updateHomework)
+  .delete(auth(['admin', 'tutor','student']), validate(homeworkValidation.deleteHomework), homeworkController.deleteHomework);
 
 router
   .route('/:homeworkId/tasks/:taskId/submit')
