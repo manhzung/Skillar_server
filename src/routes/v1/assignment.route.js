@@ -8,18 +8,18 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(['admin', 'tutor']), validate(assignmentValidation.createAssignment), assignmentController.createAssignment)
+  .post(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.createAssignment), assignmentController.createAssignment)
   .get(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.getAssignments), assignmentController.getAssignments);
 
 router
   .route('/:assignmentId')
   .get(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.getAssignment), assignmentController.getAssignment)
-  .patch(auth(['admin', 'tutor']), validate(assignmentValidation.updateAssignment), assignmentController.updateAssignment)
-  .delete(auth(['admin', 'tutor']), validate(assignmentValidation.deleteAssignment), assignmentController.deleteAssignment);
+  .patch(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.updateAssignment), assignmentController.updateAssignment)
+  .delete(auth(['admin', 'student', 'tutor']), validate(assignmentValidation.deleteAssignment), assignmentController.deleteAssignment);
 
 router
   .route('/:assignmentId/tasks/:taskId/submit')
-  .patch(auth(['student','admin']), validate(assignmentValidation.submitTask), assignmentController.submitTask);
+  .patch(auth(['student','admin', 'tutor']), validate(assignmentValidation.submitTask), assignmentController.submitTask);
 
 router
   .route('/stats/today')
