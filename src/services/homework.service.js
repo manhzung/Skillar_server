@@ -131,9 +131,16 @@ const submitHomeworkTask = async (homeworkId, taskId, submitData) => {
 
   Object.assign(task, submitData);
   
-  // Auto-update status to 'submitted' when answerURL is provided
+  // Auto-update status when answerURL is provided
   if (submitData.answerURL && submitData.answerURL.trim() !== '') {
-    task.status = 'submitted';
+    const now = new Date();
+    
+    // Check if submitted after deadline
+    if (now > homework.deadline) {
+      task.status = 'late-submitted';  // Late submission
+    } else {
+      task.status = 'submitted';  // On-time submission
+    }
   }
   
   await homework.save();  // This triggers pre-save hook to update homework status

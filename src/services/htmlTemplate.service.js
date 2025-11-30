@@ -68,12 +68,25 @@ const generateReportHTML = (reportData) => {
     }
     
     .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    
+    .header-logo {
+      flex-shrink: 0;
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+    }
+    
+    .header-content {
+      flex: 1;
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: white;
-      padding: 32px;
-      text-align: center;
+      padding: 24px 32px;
       border-radius: 12px;
-      margin-bottom: 24px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
@@ -341,8 +354,8 @@ const generateReportHTML = (reportData) => {
     
     .subject-evaluation {
       margin-top: 16px;
-      background: #fef3c7;
-      border: 1px solid #fbbf24;
+      background: white;
+      border: 1px solid #e5e7eb;
       border-radius: 8px;
       padding: 16px;
     }
@@ -351,14 +364,14 @@ const generateReportHTML = (reportData) => {
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      color: #92400e;
+      color: #6b7280;
       margin-bottom: 8px;
       letter-spacing: 0.05em;
     }
     
     .evaluation-text {
       font-size: 14px;
-      color: #78350f;
+      color: #374151;
       line-height: 1.7;
     }
     
@@ -389,8 +402,11 @@ const generateReportHTML = (reportData) => {
 <body>
   <div class="container">
     <div class="header">
-      <h1>BÁO CÁO BUỔI HỌC</h1>
-      <div class="subtitle">Báo cáo chi tiết đánh giá và nhận xét</div>
+      ${reportData.logo ? `<img src="${reportData.logo}" alt="Skillar Logo" class="header-logo">` : ''}
+      <div class="header-content">
+        <h1>BÁO CÁO BUỔI HỌC</h1>
+        <div class="subtitle">Báo cáo chi tiết đánh giá và nhận xét</div>
+      </div>
     </div>
     
     <div class="content-wrapper">
@@ -494,7 +510,7 @@ const generateReportHTML = (reportData) => {
           <!-- Subject Evaluation from Review Comment -->
           ${assignment.subjectComment ? `
           <div class="subject-evaluation">
-            <div class="evaluation-title">📝 ĐÁNH GIÁ MÔN HỌC</div>
+            <div class="evaluation-title">ĐÁNH GIÁ MÔN HỌC</div>
             <div class="evaluation-text">${assignment.subjectComment}</div>
           </div>
           ` : ''}

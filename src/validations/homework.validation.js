@@ -6,7 +6,7 @@ const taskSchema = Joi.object().keys({
   assignmentUrl: Joi.string(),
   solutionUrl: Joi.string(),
   answerURL: Joi.string(),
-  status: Joi.string().valid('in-progress', 'submitted', 'undone'),
+  status: Joi.string().valid('in-progress', 'submitted', 'late-submitted', 'undone'),
   description: Joi.string(),
 });
 
@@ -29,7 +29,7 @@ const getHomeworks = {
     studentId: Joi.string().custom(objectId),
     scheduleId: Joi.string().custom(objectId),
     subject: Joi.string(),
-    status: Joi.string().valid('in-progress', 'completed', 'undone'),
+    status: Joi.string().valid('in-progress', 'completed', 'late-completed', 'undone'),
     difficulty: Joi.string().valid('easy', 'medium', 'hard', 'advanced'),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
@@ -74,7 +74,7 @@ const submitTask = {
   body: Joi.object().keys({
     solutionUrl: Joi.string(),
     answerURL: Joi.string(),
-    status: Joi.string().valid('submitted'),
+    status: Joi.string().valid('submitted', 'late-submitted'),
     description: Joi.string(),
   }),
 };

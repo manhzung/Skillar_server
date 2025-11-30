@@ -134,29 +134,16 @@ const getAssignmentById = async (id) => {
  * @returns {Promise<Assignment>}
  */
 const updateAssignmentById = async (assignmentId, updateBody) => {
-  const assignment = await Assignment.findByIdAndUpdate(assignmentId, updateBody, {
-    new: true,
-    runValidators: true,
-  })
-    .populate({
-      path: 'scheduleId',
-      populate: [
-        {
-          path: 'studentId',
-          select: USER_SELECT_FIELDS,
-        },
-        {
-          path: 'tutorId',
-          select: USER_SELECT_FIELDS,
-        },
-      ],
-    });
+  const assignment = await getAssignmentById(assignmentId);
   
-  if (!assignment) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
-  }
+  // Apply updates
+  Object.assign(assignment, updateBody);
   
-  return assignment;
+  // Save to trigger pre-save hook (auto-updates status based on tasks)
+  await assignment.save();
+  
+  // Re-fetch with populated fields
+  return getAssignmentById(assignmentId);
 };
 
 /**

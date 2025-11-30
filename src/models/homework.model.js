@@ -22,7 +22,7 @@ const homeworkDetailSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['in-progress', 'submitted', 'undone'],
+      enum: ['in-progress', 'submitted', 'late-submitted', 'undone'],
       default: 'in-progress',
     },
     description: {
@@ -83,11 +83,13 @@ const homeworkSchema = mongoose.Schema(
 homeworkSchema.pre('save', function (next) {
   // Only update status if there are tasks
   if (this.tasks && this.tasks.length > 0) {
-    const allSubmitted = this.tasks.every((task) => task.status === 'submitted');
+    const allSubmitted = this.tasks.every(
+      (task) => task.status === 'submitted' || task.status === 'late-submitted'
+    );
     const anyUndone = this.tasks.some((task) => task.status === 'undone');
     
     if (allSubmitted) {
-      // All tasks submitted → homework completed
+      // All tasks submitted (on time or late) → homework completed
       this.status = 'completed';
     } else if (anyUndone) {
       // At least one task undone → homework undone

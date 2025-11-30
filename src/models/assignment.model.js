@@ -97,6 +97,28 @@ const assignmentSchema = mongoose.Schema(
   }
 );
 
+// Pre-save middleware to auto-update assignment status based on tasks
+assignmentSchema.pre('save', function (next) {
+  // Only update status if there are tasks
+  if (this.tasks && this.tasks.length > 0) {
+    const allSubmitted = this.tasks.every((task) => task.status === 'submitted');
+    const anyInProgress = this.tasks.some((task) => task.status === 'in-progress');
+    
+    if (allSubmitted) {
+      // All tasks submitted -> assignment completed
+      this.status = 'completed';
+    } else if (anyInProgress) {
+      // At least one task in progress -> assignment in progress
+      this.status = 'in-progress';
+    } else {
+      // All tasks are pending or undone -> assignment pending
+      this.status = 'pending';
+    }
+  }
+  
+  next();
+});
+
 // add plugin that converts mongoose to json
 assignmentSchema.plugin(toJSON);
 assignmentSchema.plugin(paginate);

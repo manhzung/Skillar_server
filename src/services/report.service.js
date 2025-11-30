@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const httpStatus = require('http-status');
+const fs = require('fs');
+const path = require('path');
 const { Schedule, Assignment, Review } = require('../models');
 const { cloudinary } = require('../config/cloudinary');
 const { generateReportHTML } = require('./htmlTemplate.service');
@@ -98,6 +100,16 @@ const generateReportForSchedule = async (scheduleId) => {
     // General comment - lấy từ schedule.overallRating (đã chuyển sang Schedule model)
     generalComment: schedule.overallRating || 'N/A',
   };
+  
+  // Convert logo to base64 for embedding in PDF
+  try {
+    const logoPath = path.join(__dirname, '../../public/image/Skillar-logo.png');
+    const logoBuffer = fs.readFileSync(logoPath);
+    reportData.logo = `data:image/png;base64,${logoBuffer.toString('base64')}`;
+  } catch (error) {
+    console.warn('Logo not found, PDF will be generated without logo:', error.message);
+    reportData.logo = '';
+  }
 
   // Generate HTML
   const html = generateReportHTML(reportData);

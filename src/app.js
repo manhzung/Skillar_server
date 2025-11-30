@@ -44,6 +44,9 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
+// serve static files from public folder (for logo, images, etc.)
+app.use(express.static('public'));
+
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
