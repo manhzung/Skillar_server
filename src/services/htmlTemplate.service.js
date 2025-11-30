@@ -542,16 +542,6 @@ const generateReportHTML = (reportData) => {
       </div>
       ` : ''}
       
-      <!-- General Comment -->
-      ${generalComment ? `
-      <div class="section">
-        <div class="general-comment-box">
-          <div class="general-comment-title">NHẬN XÉT CHUNG CHO MÔN HỌC TỪ TUTOR</div>
-          <div class="general-comment-text">${generalComment}</div>
-        </div>
-      </div>
-      ` : ''}
-      
       <div class="footer">
         Báo cáo được tạo tự động bởi hệ thống Skillar vào ${new Date().toLocaleString('vi-VN')}
       </div>
