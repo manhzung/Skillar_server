@@ -103,6 +103,9 @@ const generateReportForSchedule = async (scheduleId) => {
               status: task.status,
               description: task.description || 'N/A',
               note: task.note || 'N/A', // Thêm field note mới
+              assignmentUrl: task.assignmentUrl || null, // File bài tập
+              answerURL: task.answerURL || null, // Bài làm học sinh
+              solutionUrl: task.solutionUrl || null, // File lời giải
               result: taskGrade?.result, // Kết quả đánh giá từ Review
               gradeComment: taskGrade?.comment || 'N/A', // Comment cho task từ Review
             };
@@ -125,7 +128,7 @@ const generateReportForSchedule = async (scheduleId) => {
   
   // Fetch logo from Cloudinary URL and convert to base64 for embedding in PDF
   try {
-    const logoUrl = 'https://res.cloudinary.com/dgtdarhcb/image/upload/v1764524738/skillar/ywxcvasaqw5hbldvl8pe.png';
+    const logoUrl = 'https://res.cloudinary.com/dgtdarhcb/image/upload/v1764597614/skillar/jesp9ct3cmrzvaaenz9p.png';
     reportData.logo = await fetchImageAsBase64(logoUrl);
   } catch (error) {
     console.warn('Failed to fetch logo from Cloudinary, PDF will be generated without logo:', error.message);

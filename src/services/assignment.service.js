@@ -152,10 +152,19 @@ const updateAssignmentById = async (assignmentId, updateBody) => {
  * @returns {Promise<Assignment>}
  */
 const deleteAssignmentById = async (assignmentId) => {
-  const assignment = await Assignment.findByIdAndDelete(assignmentId);
+  const { Review } = require('../models');
+
+  const assignment = await Assignment.findById(assignmentId);
   if (!assignment) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
   }
+
+  // Delete all reviews for this assignment
+  await Review.deleteMany({ assignmentID: assignmentId });
+
+  // Delete the assignment
+  await assignment.deleteOne();
+
   return assignment;
 };
 

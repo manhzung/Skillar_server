@@ -107,10 +107,19 @@ const updateHomeworkById = async (homeworkId, updateBody) => {
  * @returns {Promise<Homework>}
  */
 const deleteHomeworkById = async (homeworkId) => {
-  const homework = await Homework.findByIdAndDelete(homeworkId);
+  const { HomeworkReview } = require('../models');
+
+  const homework = await Homework.findById(homeworkId);
   if (!homework) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Homework not found');
   }
+
+  // Delete all reviews for this homework
+  await HomeworkReview.deleteMany({ homeworkId });
+
+  // Delete the homework
+  await homework.deleteOne();
+
   return homework;
 };
 

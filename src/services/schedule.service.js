@@ -89,10 +89,40 @@ const updateScheduleById = async (scheduleId, updateBody, user) => {
  * @returns {Promise<Schedule>}
  */
 const deleteScheduleById = async (scheduleId) => {
-  const schedule = await Schedule.findByIdAndDelete(scheduleId);
+  const { Review, HomeworkReview } = require('../models');
+  
+  const schedule = await Schedule.findById(scheduleId);
   if (!schedule) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Schedule not found');
   }
+
+  // Find all assignments for this schedule
+  const assignments = await Assignment.find({ scheduleId });
+  const assignmentIds = assignments.map((a) => a._id);
+
+  // Delete all reviews for these assignments
+  if (assignmentIds.length > 0) {
+    await Review.deleteMany({ assignmentID: { $in: assignmentIds } });
+  }
+
+  // Delete all assignments for this schedule
+  await Assignment.deleteMany({ scheduleId });
+
+  // Find all homeworks for this schedule
+  const homeworks = await Homework.find({ scheduleId });
+  const homeworkIds = homeworks.map((h) => h._id);
+
+  // Delete all homework reviews
+  if (homeworkIds.length > 0) {
+    await HomeworkReview.deleteMany({ homeworkId: { $in: homeworkIds } });
+  }
+
+  // Delete all homeworks for this schedule
+  await Homework.deleteMany({ scheduleId });
+
+  // Delete the schedule
+  await schedule.deleteOne();
+
   return schedule;
 };
 

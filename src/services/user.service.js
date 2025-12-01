@@ -86,10 +86,63 @@ const updateUserById = async (userId, updateBody) => {
  * @returns {Promise<User>}
  */
 const deleteUserById = async (userId) => {
-  const user = await User.findByIdAndDelete(userId);
+  const { StudentInfo, TutorInfo, Schedule, Homework, Token, Assignment, Review, HomeworkReview } = require('../models');
+
+  const user = await User.findById(userId);
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
+
+  // Delete user info based on role
+  if (user.role === 'student') {
+    await StudentInfo.deleteOne({ userId });
+  } else if (user.role === 'tutor') {
+    await TutorInfo.deleteOne({ userId });
+  }
+
+  // Find all schedules where user is student or tutor
+  const schedules = await Schedule.find({
+    $or: [{ studentId: userId }, { tutorId: userId }],
+  });
+  const scheduleIds = schedules.map((s) => s._id);
+
+  if (scheduleIds.length > 0) {
+    // Find all assignments for these schedules
+    const assignments = await Assignment.find({
+      scheduleId: { $in: scheduleIds },
+    });
+    const assignmentIds = assignments.map((a) => a._id);
+
+    // Delete reviews for these assignments
+    if (assignmentIds.length > 0) {
+      await Review.deleteMany({ assignmentID: { $in: assignmentIds } });
+    }
+
+    // Delete assignments
+    await Assignment.deleteMany({ scheduleId: { $in: scheduleIds } });
+
+    // Find homeworks for these schedules
+    const homeworks = await Homework.find({ scheduleId: { $in: scheduleIds } });
+    const homeworkIds = homeworks.map((h) => h._id);
+
+    // Delete homework reviews
+    if (homeworkIds.length > 0) {
+      await HomeworkReview.deleteMany({ homeworkId: { $in: homeworkIds } });
+    }
+
+    // Delete homeworks
+    await Homework.deleteMany({ scheduleId: { $in: scheduleIds } });
+
+    // Delete schedules
+    await Schedule.deleteMany({ _id: { $in: scheduleIds } });
+  }
+
+  // Delete user's tokens
+  await Token.deleteMany({ user: userId });
+
+  // Delete the user
+  await user.deleteOne();
+
   return user;
 };
 
