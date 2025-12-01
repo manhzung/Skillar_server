@@ -8,14 +8,14 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(['tutor', 'admin']), validate(homeworkReviewValidation.createHomeworkReview), homeworkReviewController.createHomeworkReview)
+  .post(auth(['tutor', 'admin','student']), validate(homeworkReviewValidation.createHomeworkReview), homeworkReviewController.createHomeworkReview)
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(homeworkReviewValidation.getHomeworkReviews), homeworkReviewController.getHomeworkReviews);
 
 router
   .route('/:homeworkReviewId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(homeworkReviewValidation.getHomeworkReview), homeworkReviewController.getHomeworkReview)
-  .patch(auth(['tutor', 'admin']), validate(homeworkReviewValidation.updateHomeworkReview), homeworkReviewController.updateHomeworkReview)
-  .delete(auth(['admin', 'tutor']), validate(homeworkReviewValidation.deleteHomeworkReview), homeworkReviewController.deleteHomeworkReview);
+  .patch(auth(['tutor', 'admin','student']), validate(homeworkReviewValidation.updateHomeworkReview), homeworkReviewController.updateHomeworkReview)
+  .delete(auth(['admin', 'tutor','student']), validate(homeworkReviewValidation.deleteHomeworkReview), homeworkReviewController.deleteHomeworkReview);
 
 /**
  * @swagger

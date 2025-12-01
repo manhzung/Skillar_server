@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(['tutor','admin']), validate(reviewValidation.createReview), reviewController.createReview)
+  .post(auth(['tutor','admin','student']), validate(reviewValidation.createReview), reviewController.createReview)
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(reviewValidation.getReviews), reviewController.getReviews);
 
 router
@@ -18,8 +18,8 @@ router
 router
   .route('/:reviewId')
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(reviewValidation.getReview), reviewController.getReview)
-  .patch(auth(['tutor','admin']), validate(reviewValidation.updateReview), reviewController.updateReview)
-  .delete(auth(['admin']), validate(reviewValidation.deleteReview), reviewController.deleteReview);
+  .patch(auth(['tutor','admin','student']), validate(reviewValidation.updateReview), reviewController.updateReview)
+  .delete(auth(['admin','student','tutor']), validate(reviewValidation.deleteReview), reviewController.deleteReview);
 
 /**
  * @swagger

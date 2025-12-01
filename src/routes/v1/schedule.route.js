@@ -8,7 +8,7 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth(['admin']), validate(scheduleValidation.createSchedule), scheduleController.createSchedule)
+  .post(auth(['admin','tutor']), validate(scheduleValidation.createSchedule), scheduleController.createSchedule)
   .get(auth(['admin', 'student', 'parent', 'tutor']), validate(scheduleValidation.getSchedules), scheduleController.getSchedules);
 
 /**

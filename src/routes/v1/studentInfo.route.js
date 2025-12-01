@@ -8,10 +8,10 @@ const router = express.Router({ mergeParams: true });
 
 router
   .route('/')
-  .post(auth(['admin']), validate(studentInfoValidation.createStudentInfo), studentInfoController.createStudentInfo)
+  .post(auth(['admin','tutor', 'student']), validate(studentInfoValidation.createStudentInfo), studentInfoController.createStudentInfo)
   .get(auth(['admin','tutor', 'student', 'parent']), validate(studentInfoValidation.getStudentInfo), studentInfoController.getStudentInfo)
-  .patch(auth(['admin']), validate(studentInfoValidation.updateStudentInfo), studentInfoController.updateStudentInfo)
-  .delete(auth(['admin']), validate(studentInfoValidation.deleteStudentInfo), studentInfoController.deleteStudentInfo);
+  .patch(auth(['admin','tutor', 'student']), validate(studentInfoValidation.updateStudentInfo), studentInfoController.updateStudentInfo)
+  .delete(auth(['admin','tutor', 'student']), validate(studentInfoValidation.deleteStudentInfo), studentInfoController.deleteStudentInfo);
 
 /**
  * @swagger
