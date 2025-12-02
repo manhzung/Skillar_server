@@ -16,16 +16,16 @@ const assignmentDetailSchema = mongoose.Schema(
       type: Number, // in minutes
     },
     assignmentUrl: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     solutionUrl: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     answerURL: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     status: {
       type: String,

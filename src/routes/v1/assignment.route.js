@@ -100,18 +100,24 @@ router
  *                       description: Actual time in minutes
  *                       example: 25
  *                     assignmentUrl:
- *                       type: string
- *                       format: uri
- *                       example: "https://example.com/assignment.pdf"
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
+ *                       example: ["https://example.com/assignment.pdf"]
  *                     solutionUrl:
- *                       type: string
- *                       format: uri
- *                       example: "https://example.com/solution.pdf"
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
+ *                       example: ["https://example.com/solution.pdf"]
  *                     answerURL:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                       description: Student's answer/solution file URL
- *                       example: "https://example.com/student-answer.pdf"
+ *                       example: ["https://example.com/student-answer.pdf"]
  *                     status:
  *                       type: string
  *                       enum: [pending, in-progress, submitted, graded]
@@ -167,11 +173,17 @@ router
  *                       actualTime:
  *                         type: integer
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -311,11 +323,17 @@ router
  *                             actualTime:
  *                               type: integer
  *                             assignmentUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             solutionUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             answerURL:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             status:
  *                               type: string
  *                             description:
@@ -395,11 +413,17 @@ router
  *                             actualTime:
  *                               type: integer
  *                             assignmentUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             solutionUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             answerURL:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             status:
  *                               type: string
  *                             description:
@@ -501,11 +525,17 @@ router
  *                       actualTime:
  *                         type: integer
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -577,14 +607,20 @@ router
  *                       type: integer
  *                       minimum: 0
  *                     assignmentUrl:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                     solutionUrl:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                     answerURL:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                       description: Student's answer/solution file URL
  *                     status:
  *                       type: string
@@ -638,11 +674,17 @@ router
  *                       actualTime:
  *                         type: integer
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -723,14 +765,18 @@ router
  *                 description: Actual time spent in minutes
  *                 example: 25
  *               solutionUrl:
- *                 type: string
- *                 format: uri
- *                 example: "https://example.com/solution.pdf"
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uri
+ *                 example: ["https://example.com/solution.pdf"]
  *               answerURL:
- *                 type: string
- *                 format: uri
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uri
  *                 description: Student's answer/solution file URL
- *                 example: "https://example.com/student-answer.pdf"
+ *                 example: ["https://example.com/student-answer.pdf"]
  *               status:
  *                 type: string
  *                 enum: [submitted]
@@ -769,11 +815,17 @@ router
  *                       actualTime:
  *                         type: integer
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:

@@ -83,18 +83,24 @@ router
  *                       type: string
  *                       example: "Solve quadratic equations"
  *                     assignmentUrl:
- *                       type: string
- *                       format: uri
- *                       example: "https://example.com/assignment.pdf"
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
+ *                       example: ["https://example.com/assignment.pdf"]
  *                     solutionUrl:
- *                       type: string
- *                       format: uri
- *                       example: "https://example.com/solution.pdf"
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
+ *                       example: ["https://example.com/solution.pdf"]
  *                     answerURL:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                       description: Student's answer/solution file URL
- *                       example: "https://example.com/student-answer.pdf"
+ *                       example: ["https://example.com/student-answer.pdf"]
  *                     status:
  *                       type: string
  *                       enum: [in-progress, submitted, late-submitted, undone]
@@ -138,11 +144,17 @@ router
  *                       name:
  *                         type: string
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -254,11 +266,17 @@ router
  *                             name:
  *                               type: string
  *                             assignmentUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             solutionUrl:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             answerURL:
- *                               type: string
+ *                               type: array
+ *                               items:
+ *                                 type: string
  *                             status:
  *                               type: string
  *                               enum: [in-progress, submitted, late-submitted, undone]
@@ -333,11 +351,17 @@ router
  *                       name:
  *                         type: string
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -397,14 +421,20 @@ router
  *                     name:
  *                       type: string
  *                     assignmentUrl:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                     solutionUrl:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                     answerURL:
- *                       type: string
- *                       format: uri
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
  *                     status:
  *                       type: string
  *                       enum: [in-progress, submitted, late-submitted, undone]
@@ -445,11 +475,17 @@ router
  *                       name:
  *                         type: string
  *                       assignmentUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       solutionUrl:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       answerURL:
- *                         type: string
+ *                         type: array
+ *                         items:
+ *                           type: string
  *                       status:
  *                         type: string
  *                       description:
@@ -523,14 +559,18 @@ router
  *             type: object
  *             properties:
  *               solutionUrl:
- *                 type: string
- *                 format: uri
- *                 example: "https://example.com/solution.pdf"
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uri
+ *                 example: ["https://example.com/solution.pdf"]
  *               answerURL:
- *                 type: string
- *                 format: uri
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: uri
  *                 description: Student's answer/solution file URL
- *                 example: "https://example.com/student-answer.pdf"
+ *                 example: ["https://example.com/student-answer.pdf"]
  *               status:
  *                 type: string
  *                 enum: [submitted, late-submitted]
@@ -565,17 +605,6 @@ router
  *                       name:
  *                         type: string
  *                       assignmentUrl:
- *                         type: string
- *                       solutionUrl:
- *                         type: string
- *                       answerURL:
- *                         type: string
- *                       status:
- *                         type: string
- *                       description:
- *                         type: string
- *       "400":
- *         description: Bad Request
  *       "401":
  *         description: Unauthorized
  *       "403":

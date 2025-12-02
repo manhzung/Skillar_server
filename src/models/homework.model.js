@@ -9,16 +9,16 @@ const homeworkDetailSchema = mongoose.Schema(
       trim: true,
     },
     assignmentUrl: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     solutionUrl: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     answerURL: {
-      type: String,
-      trim: true,
+      type: [String],
+      default: [],
     },
     status: {
       type: String,

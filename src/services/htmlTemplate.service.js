@@ -28,6 +28,16 @@ const generateReportHTML = (reportData) => {
     return d.toLocaleDateString('vi-VN', options);
   };
 
+  // Helper to render links
+  const renderLinks = (urls, label) => {
+    if (!urls || urls.length === 0) return '—';
+    // Handle case where urls might still be a string (legacy data)
+    const urlList = Array.isArray(urls) ? urls : [urls];
+    return urlList.map((url, index) => 
+      `<a href="${url}" class="file-link" target="_blank">${label} ${urlList.length > 1 ? index + 1 : ''}</a>`
+    ).join('<br>');
+  };
+
   // Format time
   const formatTime = (date, duration) => {
     const start = new Date(date);
@@ -728,9 +738,9 @@ const generateReportHTML = (reportData) => {
                 <tr>
                   <td><strong>${task.name || 'N/A'}</strong></td>
                   <td>${task.estimatedTime || 0}' / ${task.actualTime ? task.actualTime + "'" : '—'}</td>
-                  <td>${task.assignmentUrl ? `<a href="${task.assignmentUrl}" class="file-link">Xem file</a>` : '—'}</td>
-                  <td>${task.answerURL ? `<a href="${task.answerURL}" class="file-link">File lời giải</a>` : '—'}</td>
-                  <td>${task.solutionUrl ? `<a href="${task.solutionUrl}" class="file-link">Xem file</a>` : '—'}</td>
+                  <td>${renderLinks(task.assignmentUrl, 'Xem file')}</td>
+                  <td>${renderLinks(task.answerURL, 'File lời giải')}</td>
+                  <td>${renderLinks(task.solutionUrl, 'Xem file')}</td>
                   <td>
                     <span class="status-badge ${
                       task.status === 'submitted' || task.status === 'completed' || task.status === 'graded' 

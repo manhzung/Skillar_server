@@ -3,9 +3,9 @@ const { objectId } = require('./custom.validation');
 
 const taskSchema = Joi.object().keys({
   name: Joi.string().required(),
-  assignmentUrl: Joi.string(),
-  solutionUrl: Joi.string(),
-  answerURL: Joi.string(),
+  assignmentUrl: Joi.array().items(Joi.string()),
+  solutionUrl: Joi.array().items(Joi.string()),
+  answerURL: Joi.array().items(Joi.string()),
   status: Joi.string().valid('in-progress', 'submitted', 'late-submitted', 'undone'),
   description: Joi.string(),
 });
@@ -72,8 +72,8 @@ const submitTask = {
     taskId: Joi.string().custom(objectId).required(),
   }),
   body: Joi.object().keys({
-    solutionUrl: Joi.string(),
-    answerURL: Joi.string(),
+    solutionUrl: Joi.array().items(Joi.string()),
+    answerURL: Joi.array().items(Joi.string()),
     status: Joi.string().valid('submitted', 'late-submitted'),
     description: Joi.string(),
   }),

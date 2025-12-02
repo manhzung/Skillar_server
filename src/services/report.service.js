@@ -103,9 +103,9 @@ const generateReportForSchedule = async (scheduleId) => {
               status: task.status,
               description: task.description || 'N/A',
               note: task.note || 'N/A', // Thêm field note mới
-              assignmentUrl: task.assignmentUrl || null, // File bài tập
-              answerURL: task.answerURL || null, // Bài làm học sinh
-              solutionUrl: task.solutionUrl || null, // File lời giải
+              assignmentUrl: task.assignmentUrl || [], // File bài tập
+              answerURL: task.answerURL || [], // Bài làm học sinh
+              solutionUrl: task.solutionUrl || [], // File lời giải
               result: taskGrade?.result, // Kết quả đánh giá từ Review
               gradeComment: taskGrade?.comment || 'N/A', // Comment cho task từ Review
             };

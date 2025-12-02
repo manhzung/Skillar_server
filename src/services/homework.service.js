@@ -141,7 +141,7 @@ const submitHomeworkTask = async (homeworkId, taskId, submitData) => {
   Object.assign(task, submitData);
   
   // Auto-update status when answerURL is provided
-  if (submitData.answerURL && submitData.answerURL.trim() !== '') {
+  if (submitData.answerURL && submitData.answerURL.length > 0) {
     const now = new Date();
     
     // Check if submitted after deadline
